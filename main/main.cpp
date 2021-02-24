@@ -11,7 +11,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/Softartm/Motor_Softarm/graficas_demos/PRE_demodegs30.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/Soft-Arm/graphs/PRE_demodegs30.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -28,7 +28,7 @@ int main ()
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(6,6);
 
-    TableArmKinematics a("../Motor_Softarm/Tabla170.csv");
+    TableArmKinematics a("../Tabla170.csv");
     vector<double> lengths(3);
 
     double incli=30.0; //inclination tendon length

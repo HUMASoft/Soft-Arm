@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 aux_source_directory(main SRC_LIST)
 aux_source_directory(tools SRC_LIST)
 
-
+add_subdirectory(kinematics)
 #todo: put this code inside library klinematics.
 #required for kinematics library
 find_package(Eigen3 REQUIRED NO_MODULE)
@@ -19,7 +19,8 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 
 add_subdirectory(lib/CiA402Device)
-add_subdirectory(lib/kinematics)
+
+
 add_subdirectory(lib/sensor-integration/)
 add_subdirectory(lib/fcontrol/)
 add_subdirectory(lib/i-plot)
@@ -28,9 +29,9 @@ add_subdirectory(lib/i-plot)
 
 
 #revisar la forma de incluir kinematics
-#INCLUDE_DIRECTORIES(kinematics)
-#add_library(kinematics kinematics/Kinematics.cpp)
-#set(SUBDIR_LINK_NAMES ${SUBDIR_LINK_NAMES} kinematics)
+INCLUDE_DIRECTORIES(kinematics)
+add_library(kinematics kinematics/Kinematics.cpp)
+set(SUBDIR_LINK_NAMES ${SUBDIR_LINK_NAMES} kinematics)
 
 #find_package(libplot)
 
