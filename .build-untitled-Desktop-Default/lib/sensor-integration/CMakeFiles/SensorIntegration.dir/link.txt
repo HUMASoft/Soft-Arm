@@ -1,0 +1,2 @@
+/usr/bin/ar qc libSensorIntegration.a  CMakeFiles/SensorIntegration.dir/SensorIntegration.cpp.o CMakeFiles/SensorIntegration.dir/SerialArduino.cpp.o CMakeFiles/SensorIntegration.dir/SerialComm.cpp.o CMakeFiles/SensorIntegration.dir/attitude_estimator.cpp.o CMakeFiles/SensorIntegration.dir/imu3dmgx510.cpp.o
+/usr/bin/ranlib libSensorIntegration.a

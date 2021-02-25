@@ -1,0 +1,1 @@
+/usr/bin/g++ -fPIC   -shared -Wl,-soname,libiplot.so -o libiplot.so CMakeFiles/iplot.dir/IPlot.cpp.o -lplotter 
