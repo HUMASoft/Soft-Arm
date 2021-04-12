@@ -1,6 +1,7 @@
+project(Soft-Arm)
+
 cmake_minimum_required(VERSION 2.8)
 
-project(Soft-Arm)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,7 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 aux_source_directory(main SRC_LIST)
 aux_source_directory(tools SRC_LIST)
 
-add_subdirectory(kinematics)
+
+add_subdirectory(lib)
+
+#add_subdirectory(kinematics)
 #todo: put this code inside library klinematics.
 #required for kinematics library
 find_package(Eigen3 REQUIRED NO_MODULE)
@@ -18,12 +22,6 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 
 
 
-add_subdirectory(lib/CiA402Device)
-
-
-add_subdirectory(lib/sensor-integration/)
-add_subdirectory(lib/fcontrol/)
-add_subdirectory(lib/i-plot)
 #INCLUDE_DIRECTORIES(${SUBDIR_INCLUDE_DIRECTORIES})
 #target_link_libraries( ${PROJECT_NAME} ${SUBDIR_LINK_NAMES} )
 

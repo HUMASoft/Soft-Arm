@@ -38,10 +38,11 @@ const char *PORT = "/dev/ttyUSB0";
 
 //Plotting functions are only used to copy-paste vector in Matlab
 
-void PlotEulerAngles(double* rollangle,double* pitchangle, double rollaverage, double pitchaverage, int numero){
+void PlotEulerAngles(double* rollangle,double* pitchangle, double* yawangle, double rollaverage, double pitchaverage,double yawaverage , int numero){ //CR
 
     cout << "Initial offset in pitch is: "<< pitchaverage << '\n';
     cout << "Initial offset in roll is: "<< rollaverage << '\n';
+    cout << "Initial offset in yaw is: "<< yawaverage << '\n'; //CR
 
     for (int c=0;c<=numero-100;c++){
 
@@ -75,6 +76,19 @@ void PlotEulerAngles(double* rollangle,double* pitchangle, double rollaverage, d
             cout << *(pitchangle+c) << " ";
         }
     }
+    //CR  {
+    for (int c=0;c<=numero-100;c++){
+        if (c==0){
+            cout << "yaw = [" << *(yawangle+c) << " ";
+        }
+        if (c==(numero-100)){
+            cout << *(yawangle+c) << ']'<< '\n';
+        }else{
+            cout << *(yawangle+c) << " ";
+        }
+    }
+    //CR   }
+
 }
 void PlotGyro(double* gyrosx,double* gyrosy, double* gyrosz, int numero){
 
@@ -130,8 +144,12 @@ int main()
     int end=0;
     double *roll;
     double *pitch;
+    double *yaw; //CR
     double absrollaverage=0.0;
     double abspitchaverage=0.0;
+
+    double absyawaverage=0.0; //CR
+
     double *gyrox;
     double *gyroy;
     double *gyroz;
@@ -208,9 +226,9 @@ int main()
             misensor.set_freq(frecuenciaeuler);
             misensor.set_devicetogetgyroacc();
             misensor.set_streamon();
-            std::tie(roll, pitch, absrollaverage, abspitchaverage)= misensor.get_euleranglesStreaming(numeromuestras);
+            std::tie(roll, pitch, yaw, absrollaverage, abspitchaverage,absyawaverage)= misensor.get_euleranglesStreaming(numeromuestras); //CR
             //Vectors to plot data in Matlab
-            PlotEulerAngles(roll, pitch, absrollaverage, abspitchaverage,numeromuestras);
+            PlotEulerAngles(roll, pitch, yaw, absrollaverage, abspitchaverage,numeromuestras,absyawaverage); //CR
             misensor.set_streamoff();
             break;}
 
@@ -226,7 +244,7 @@ int main()
             misensor.set_devicetogetgyroacc();
             estimator = misensor.get_euleranglesPolling();
             misensor.set_streamoff();
-            cout << "(" << estimator[0] << "," << estimator[1] << ")" << endl;
+            cout << "(" << estimator[0] << "," << estimator[1] << "," << estimator[2] <<")" << endl; //CR
             break;}
 
         case 6:{
@@ -236,7 +254,7 @@ int main()
             misensor.set_streamon();
             do{
                 EulerAngles = misensor.EulerAngles();
-                cout << "Roll: " << EulerAngles[0] << " Pitch: " << EulerAngles[1] << endl;
+                cout << "Roll: " << EulerAngles[0] << " Pitch: " << EulerAngles[1] << " Yaw: " << EulerAngles[2]<< endl; //CR
             }while(true);
             break;}
 

@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/humasoft/Soft-Arm/lib/i-plot/IPlot.cpp
+IPlot.h
+/home/humasoft/Soft-Arm/lib/i-plot/IPlot.h
+
+/home/humasoft/Soft-Arm/lib/i-plot/IPlot.h
+vector
+-
+plotter.h
+-
+plot.h
+-
+fstream
+-
+algorithm
+-
+sstream
+-
+iostream
+-
+
