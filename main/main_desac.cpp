@@ -18,22 +18,23 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado50-10V3.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(6,6);
+    m1.SetupPositionMode(3,3);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(6,6);
+    m2.SetupPositionMode(3,3);
 
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(6,6);
+    m3.SetupPositionMode(3,3);
+
 
     //TableArmKinematics a("../Tabla170.csv");
 
@@ -75,33 +76,30 @@ int main ()
     ang[1] = 0; //BETA
 
     // CHANGING ALPHA AND BETA
-    for (ang[0] = -45 ; ang[0] < 50 ; ang[0]= ang[0]+5)
+    for (ang[0] = -50 ; ang[0] <= 50 ; ang[0]= ang[0]+10)
     {
-        for (ang[1] = -45 ; ang[1] < 50 ; ang[1]= ang[1]+5)
+        for (ang[1] = -50 ; ang[1] <= 50 ; ang[1]= ang[1]+10)
         {
-            double interval=3; //in seconds
+            v_lengths[0]=0.001*( ang[0] / 1.5);
+            v_lengths[1]=0.001*( (ang[1] / 1.732) - (ang[0] / 3) );
+            v_lengths[2]=0.001*( (ang[0] / -3) - (ang[1] / 1.732) );
+
+            posan1=(v_lengths[0])/radio;
+            posan2=(v_lengths[1])/radio;
+            posan3=(v_lengths[2])/radio;
+
+            m1.SetPosition(posan1);
+            m2.SetPosition(posan2);
+            m3.SetPosition(posan3);
+            double interval=5; //in seconds
             for (double t=0;t<interval; t+=dts)
             {
-                v_lengths[0]=0.001*( ang[0] / 1.5);
-                v_lengths[1]=0.001*( (ang[1] / 1.732) - (ang[0] / 3) );
-                v_lengths[2]=0.001*( (ang[0] / -3) - (ang[1] / 1.732) );
-
-                posan1=(v_lengths[0])/radio;
-                posan2=(v_lengths[1])/radio;
-                posan3=(v_lengths[2])/radio;
-
-                m1.SetPosition(posan1);
-                m2.SetPosition(posan2);
-                m3.SetPosition(posan3);
-
-                // MOTORS MUST BE TURNED ON
-                // Ponerlo en negativo (el motor va al reves)
                 cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
                 cout << "Length variation" << endl;
                 cout << "1: " << v_lengths[0]  << "2: " << v_lengths[1] << "3: " << v_lengths[2] <<endl;
                 // Sensor data
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
-                data <<ang[0] << " , " <<ang[1]<< " , "  << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
+                data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
                 cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
                 cout << endl;
             }
@@ -113,9 +111,9 @@ int main ()
 
             for (double t=0;t<interval; t+=dts)
             {
-
+                cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
-                data <<ang[0] << " , " <<ang[1]<< " , " << pitch << " , " << yaw <<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
+                data <<0 << " , " <<0<< " , " << roll << " , " << pitch << " , " << yaw <<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
                 cout<< "Vuelta"<<endl;
                 cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
                 cout << endl;
@@ -123,13 +121,11 @@ int main ()
 
                 Ts.WaitSamplingTime();
             }
+            misensor.Reset();
+            sleep(2);
 
         }
-//        cout <<"Posicion 0"<< endl;
-//        cout << "Calibrating IMU..." << endl;
-//        misensor.calibrate();
-//        cout << "Calibration done" << endl;
-//        sleep(2);
+
     }
 
     m3.SetPosition(0);

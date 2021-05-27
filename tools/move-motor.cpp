@@ -35,36 +35,36 @@ int main ()
 
     ////VELOCIDAD
 
-//    m1.Setup_Velocity_Mode();
+    m1.Setup_Velocity_Mode();
 
-//    m1.SetVelocity(-0.5);
+    m1.SetVelocity(0.5);
 
 
-//    cout << "Enter to stop." <<endl;
+    cout << "Enter to stop." <<endl;
 
 //    // position  [rads]
 
 
 
-//    getchar();
+    getchar();
 
-//    m1.SetVelocity(0);
+    m1.SetVelocity(0);
 
     ////POSICION
 
-    cout << "Back 2 zero" << endl;
-    m1.SetupPositionMode();
+//    cout << "Back 2 zero" << endl;
+//    m1.SetupPositionMode();
 
-    m1.SetPosition(0);
+//    m1.SetPosition(0);
 
-    m2.SetupPositionMode();
+//    m2.SetupPositionMode();
 
-    m2.SetPosition(0);
+//    m2.SetPosition(0);
 
-    m3.SetupPositionMode();
+//    m3.SetupPositionMode();
 
-    m3.SetPosition(0);
-    cout << "Enter to stop." <<endl;
+//    m3.SetPosition(0);
+//    cout << "Enter to stop." <<endl;
 
     // position  [rads]
 
