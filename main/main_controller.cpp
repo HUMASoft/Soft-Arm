@@ -18,7 +18,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado50-10V3.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test_Control_P20_Y20.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -36,12 +36,6 @@ int main ()
     m3.SetupPositionMode(3,3);
 
 
-    //Controller
-
-    FPDBlock conP(0.27,1.492,-0.9,dts); //(kp,kd,exp,dts) 0.0214437
-    FPDBlock reset(conP); //Used for control reset
-
-    //TableArmKinematics a("../Tabla170.csv");
 
     double radio=0.0093;
 
@@ -61,6 +55,17 @@ int main ()
     Ts.SetSamplingTime(dts);
 
 
+    //Controller
+
+    FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    FPDBlock resetP(conP); //Used for control reset
+
+    FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    FPDBlock resetY(conY); //Used for control reset
+    vector<double> ierror(2);
+    vector<double> cs(2);
+
+
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
     misensor.set_streamon();
 
@@ -73,37 +78,39 @@ int main ()
         cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
     }
 
-    vector<double> ierror(2);
-    vector<double> cs(2);
-
-    ang[0] = -50; //ALPHA
-    ang[1] = 0; //BETA
 
 
+    ang[0] = 20; //ALPHA
+    ang[1] = 20; //BETA
 
-    for (long stops = 4; stops > 0 ; stops--)
-    {
+    //cs[1]=0;
 
-        double interval=5; //in seconds
+
+
+        double interval=10; //in seconds
         for (double t=0;t<interval; t+=dts)
         {
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
             //negative feedback
-            ierror[0] = ang[0] - pitch*M_PI/180;
+            ierror[0] = ang[0] - pitch*180/M_PI;
 
+            ierror[1] = ang[1] + yaw*180/M_PI;
             //ierror= ierror*M_PI/180; //degrees to rad
 
             //controller computes control signal
             cs[0] = ierror[0] > conP;
+            cs[1] = ierror[1] > conY;
+
             //  cs = ierror > intcon;
 
             if (!isnormal(cs[0])) cs[0] = 0;
 
+            if (!isnormal(cs[1])) cs[1] = 0;
 
             v_lengths[0]=0.001*( cs[0] / 1.5);
-            v_lengths[1]=0.001*( (ang[1] / 1.732) - (cs[0] / 3) );
-            v_lengths[2]=0.001*( (cs[0] / -3) - (ang[1] / 1.732) );
+            v_lengths[1]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
+            v_lengths[2]=0.001*( (cs[0] / -3) - (cs[1] / 1.732) );
 
             posan1=(v_lengths[0])/radio;
             posan2=(v_lengths[1])/radio;
@@ -118,27 +125,20 @@ int main ()
             //cout << "1: " << v_lengths[0]  << "2: " << v_lengths[1] << "3: " << v_lengths[2] <<endl;
             // Sensor data
             //misensor.GetPitchRollYaw(pitch,roll,yaw);
-            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
+            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
             //cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
             //cout << endl;
         }
 
-        conP = FPDBlock(reset); //Reset?
+        conP = FPDBlock(resetP); //Reset?
+        conY = FPDBlock(resetY); //Reset?
 
-        ang[0]+=25;
+
+        //ang[0]+=25;
         m1.SetPosition(0);
         m2.SetPosition(0);
         m3.SetPosition(0);
         sleep(4);
 
 
-    }
-    m1.SetPosition(0);
-    m2.SetPosition(0);
-    m3.SetPosition(0);
-    sleep(4);
-
-
-
 }
-
