@@ -18,7 +18,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test_Control_P20_Y20.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test2_Control_P-20_Y-20.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -57,10 +57,14 @@ int main ()
 
     //Controller
 
-    FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437
+
     FPDBlock resetP(conP); //Used for control reset
 
-    FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437
+    FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437
+
     FPDBlock resetY(conY); //Used for control reset
     vector<double> ierror(2);
     vector<double> cs(2);
@@ -80,8 +84,8 @@ int main ()
 
 
 
-    ang[0] = 20; //ALPHA
-    ang[1] = 20; //BETA
+    ang[0] = -20; //ALPHA
+    ang[1] = -20; //BETA
 
     //cs[1]=0;
 
