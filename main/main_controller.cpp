@@ -116,6 +116,10 @@ int main ()
             v_lengths[1]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
             v_lengths[2]=0.001*( (cs[0] / -3) - (cs[1] / 1.732) );
 
+            // INVERTIDO
+            //v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) ); //Antiguo tendon 2
+            //v_lengths[1]=0.001*( (cs[0] / -3) - (cs[1] / 1.732) ); //Antiguo tendon 3
+
             posan1=(v_lengths[0])/radio;
             posan2=(v_lengths[1])/radio;
             posan3=(v_lengths[2])/radio;
