@@ -18,7 +18,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test2_Control_P-20_Y-20.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test3_Control_P0_Y-20.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -84,7 +84,7 @@ int main ()
 
 
 
-    ang[0] = -20; //ALPHA
+    ang[0] = 0; //ALPHA
     ang[1] = -20; //BETA
 
     //cs[1]=0;
