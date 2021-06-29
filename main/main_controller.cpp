@@ -98,8 +98,10 @@ int main ()
 
             //negative feedback
             ierror[0] = ang[0] - pitch*180/M_PI;
+            cout << "error 1:  " <<ierror[0];
 
-            ierror[1] = ang[1] + yaw*180/M_PI;
+            ierror[1] = ang[1] - yaw*180/M_PI;
+            cout << "error 2:  " <<ierror[1];
             //ierror= ierror*M_PI/180; //degrees to rad
 
             //controller computes control signal
