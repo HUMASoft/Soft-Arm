@@ -19,10 +19,10 @@ int main ()
 
     vector<double> ang(2);
     ang[0] = 0; //ALPHA
-    ang[1] = 0; //BETA
+    ang[1] = 20; //BETA
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestPeso500_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test5_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -39,12 +39,8 @@ int main ()
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(3,3);
 
-
-
     double radio=0.0093;
-
     vector<double> v_lengths(3);
-
     double posan1, posan2, posan3;
 
     // SENSOR
@@ -52,8 +48,6 @@ int main ()
     IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
 
     double pitch,roll, yaw;
-    //    double *EulerAngles;
-
     double dts=1/freq;
     SamplingTime Ts;
     Ts.SetSamplingTime(dts);
@@ -61,21 +55,25 @@ int main ()
     //plot
     IPlot probe(dts);
     IPlot probe2(dts);
-    //Controller
 
+    // CONTROLLER
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-
-    FPDBlock resetP(conP); //Used for control reset
+    //PIDBlock conPPID(2.8,4,1,dts);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
     FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+    //PIDBlock conYPID(2.8,4,1,dts);
 
+    FPDBlock resetP(conP); //Used for control reset
     FPDBlock resetY(conY); //Used for control reset
-    vector<double> ierror(2);
-    vector<double> cs(2);
+
+
+
+    vector<double> ierror(2); // ERROR
+    vector<double> cs(2); //CONTROL SIGNAL
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
@@ -101,13 +99,17 @@ int main ()
             //ierror= ierror*M_PI/180; //degrees to rad
 
             //PLOT DE DATOS
-            //probe.pushBack(pitch*180/M_PI);
-            //probe2.pushBack(yaw*180/M_PI);
+            probe.pushBack(pitch*180/M_PI);
+            probe2.pushBack(yaw*180/M_PI);
 
-            //controller computes control signal
+            //controller computes control signal FPD
             cs[0] = ierror[0] > conP;
             cs[1] = ierror[1] > conY;
 
+            //controller computes control signal PID
+            //cs[0] = ierror[0] > conPPID;
+            //cs[1] = ierror[1] > conYPID;
+            //cout << endl;
             if (!isnormal(cs[0])) cs[0] = 0;
 
             if (!isnormal(cs[1])) cs[1] = 0;
@@ -135,8 +137,8 @@ int main ()
         conP = FPDBlock(resetP); //Reset?
         conY = FPDBlock(resetY); //Reset?
 
-        //probe.Plot();
-        //probe2.Plot();
+        probe.Plot();
+        probe2.Plot();
 
         m1.SetPosition(0);
         m2.SetPosition(0);
