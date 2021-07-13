@@ -37,7 +37,7 @@ int main ()
 
     m1.Setup_Velocity_Mode();
 
-    m1.SetVelocity(0.5);
+    m1.SetVelocity(-1.5);
 
 
     cout << "Enter to stop." <<endl;

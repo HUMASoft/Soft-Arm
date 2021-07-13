@@ -19,10 +19,10 @@ int main ()
 
     vector<double> ang(2);
     ang[0] = 20; //ALPHA
-    ang[1] = 20; //BETA
+    ang[1] = 0; //BETA
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestDouble_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test5_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -59,18 +59,16 @@ int main ()
     // CONTROLLER
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
-    FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    //PIDBlock conPPID(2.8,4,1,dts);
-//    conPPID.AntiWindup(3,3);
+    //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+    PIDBlock conPPID(2.8,4,1,dts);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
-    FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    //PIDBlock conYPID(2.8,4,1,dts);
-//    conYPID.AntiWindup(3,3);
+    //FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+    PIDBlock conYPID(2.8,4,1,dts);
 
-    FPDBlock resetP(conP); //Used for control reset
-    FPDBlock resetY(conY); //Used for control reset
+    //FPDBlock resetP(conP); //Used for control reset
+    //FPDBlock resetY(conY); //Used for control reset
 
 
 
@@ -102,18 +100,16 @@ int main ()
 
         //PLOT DE DATOS
         probe.pushBack(pitch*180/M_PI);
-        //probe2.pushBack(yaw*180/M_PI);
+        probe2.pushBack(yaw*180/M_PI);
 
         //controller computes control signal FPD
-        cs[0] = ierror[0] > conP;
-        cs[1] = ierror[1] > conY;
+        //cs[0] = ierror[0] > conP;
+        //cs[1] = ierror[1] > conY;
 
         //controller computes control signal PID
-        //cs[0] = ierror[0] > conPPID;
-        //cs[1] = ierror[1] > conYPID;
-
-        probe2.pushBack(cs[0]);
-        //cout << endl;
+        cs[0] = ierror[0] > conPPID;
+        cs[1] = ierror[1] > conYPID;
+        cout << endl;
 
         if (!isnormal(cs[0])) cs[0] = 0;
 
@@ -142,62 +138,6 @@ int main ()
     cout <<"Done" << endl;
     //conP = FPDBlock(resetP); //Reset?
     //conY = FPDBlock(resetY); //Reset?
-
-    ang[0] = 20; //ALPHA
-    ang[1] = -20; //BETA
-
-
-    for (double t=0;t<interval; t+=dts)
-    {
-        misensor.GetPitchRollYaw(pitch,roll,yaw);
-
-        ierror[0] = ang[0] - pitch*180/M_PI;
-        ierror[1] = ang[1] - yaw*180/M_PI;
-
-        //ierror= ierror*M_PI/180; //degrees to rad
-
-        //PLOT DE DATOS
-        probe.pushBack(pitch*180/M_PI);
-        //probe2.pushBack(yaw*180/M_PI);
-
-        //controller computes control signal FPD
-        cs[0] = ierror[0] > conP;
-        cs[1] = ierror[1] > conY;
-
-        //controller computes control signal PID
-        //cs[0] = ierror[0] > conPPID;
-        //cs[1] = ierror[1] > conYPID;
-
-        probe2.pushBack(cs[0]);
-        cout << endl;
-
-        if (!isnormal(cs[0])) cs[0] = 0;
-
-        if (!isnormal(cs[1])) cs[1] = 0;
-
-        v_lengths[0]=0.001*( cs[0] / 1.5);
-        //v_lengths[1]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
-        //v_lengths[2]=0.001*( (cs[0] / -3) - (cs[1] / 1.732) );
-
-        // INVERTIDO
-        v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
-        v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) ); //Antiguo tendon 2
-
-        posan1=(v_lengths[0])/radio;
-        posan2=(v_lengths[1])/radio;
-        posan3=(v_lengths[2])/radio;
-
-        m1.SetPosition(posan1);
-        m2.SetPosition(posan2);
-        m3.SetPosition(posan3);
-
-        data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
-        //cout << endl;
-        Ts.WaitSamplingTime();
-    }
-
-
-
 
     probe.Plot();
     probe2.Plot();
