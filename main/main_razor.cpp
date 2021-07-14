@@ -8,10 +8,7 @@
 #include "IPlot.h"
 
 //
-#include "imu3dmgx510.h"
-
-//const char *PORT = "/dev/ttyUSB0";
-//
+#include "IMURazor9DOF.h"
 
 
 int main ()
@@ -22,22 +19,22 @@ int main ()
     ang[1] = 0; //BETA
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test5_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestRazor_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(3,3);
+    m1.SetupPositionMode(6,6);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(3,3);
+    m2.SetupPositionMode(6,6);
 
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(3,3);
+    m3.SetupPositionMode(6,6);
 
     double radio=0.0093;
     vector<double> v_lengths(3);
@@ -45,7 +42,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
+    IMURazor9DOF misensor("/dev/ttyUSB0");
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -60,7 +57,7 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conPPID(2.8,4,1,dts);
+    PIDBlock conPPID(0,4,0,dts);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
@@ -70,46 +67,58 @@ int main ()
     //FPDBlock resetP(conP); //Used for control reset
     //FPDBlock resetY(conY); //Used for control reset
 
-
+//    SystemBlock imuFilter(0.09516,0,- 0.9048,1); //w=5
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
-    misensor.set_streamon();
+    //misensor.set_streamon();
 
-    for (double t=0;t<10;t+=dts)
+    for (double t=0;t<2;t+=dts)
     {
-        misensor.GetPitchRollYaw(pitch,roll,yaw);
-        //cout<<"Calibrando"<<endl;
+        //misensor.GetPitchRollYaw(pitch,roll,yaw);
+
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
+        misensor.GetYawPitchRoll(dts, yaw, pitch, roll );
+        cout<<-roll<<endl;
     }
     cout<<"Calibrado"<<endl;
+    double offset_yaw = yaw;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
     double interval=20; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
-        misensor.GetPitchRollYaw(pitch,roll,yaw);
+        misensor.GetYawPitchRoll(dts, yaw, pitch, roll );
 
-        ierror[0] = ang[0] - pitch*180/M_PI;
-        ierror[1] = ang[1] - yaw*180/M_PI;
+        yaw=yaw-offset_yaw;
+        //yaw=-yaw;
+        pitch= -roll ;
+
+
+        cout << "-> pitch: " << pitch << ", yaw: " << yaw << endl;
+        ierror[0] = ang[0] - pitch;
+        ierror[1] = ang[1] - yaw;
 
         //ierror= ierror*M_PI/180; //degrees to rad
 
         //PLOT DE DATOS
-        probe.pushBack(pitch*180/M_PI);
-        probe2.pushBack(yaw*180/M_PI);
+        probe.pushBack(pitch);
+        probe2.pushBack(yaw);
 
         //controller computes control signal FPD
         //cs[0] = ierror[0] > conP;
         //cs[1] = ierror[1] > conY;
 
         //controller computes control signal PID
+
         cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
-        cout << endl;
+//        cs[1] = ierror[1] > conYPID;
+//        cout << endl;
+
+        cs[1]=0;
 
         if (!isnormal(cs[0])) cs[0] = 0;
 

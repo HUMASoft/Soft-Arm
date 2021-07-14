@@ -7,7 +7,7 @@ int main()
 {
 
 
-    IMURazor9DOF imu("/dev/ttyUSB0");
+    IMURazor9DOF imu("/dev/ttyUSB1");
 
     vector<double> data;
     double dts=0.02;
@@ -15,22 +15,24 @@ int main()
     double pitch, roll, yaw;
     IPlot plPitch(dts,"Pitch");
     IPlot plYaw(dts,"Yaw");
-    IPlot plZ(dts,"Z");
+    IPlot plRoll(dts,"Roll");
 
 
 
 
-    imu.GetPitchRollYaw(dts, pitch, roll, yaw );
+    imu.GetYawPitchRoll(dts, yaw, pitch, roll );
+    double offset_yaw = yaw;
 
-    for (double t=0; t<10; t+=dts)
+    for (double t=0; t<20; t+=dts)
     {
-//        imu.GetPitchRollYaw(dts, pitch, roll, yaw );
-        cout << "-> pitch: " << pitch*180/M_PI << ", roll: " << roll*180/M_PI << ", yaw: " << yaw*180/M_PI << endl;
+
+
+        imu.GetYawPitchRoll(dts, yaw, pitch, roll);
+        cout << "-> pitch: " << pitch << ", roll: " << roll << ", yaw: " << yaw << endl;
 //        cout << imu.GetLine() << endl;
-        imu.GetRawData(data);
-        plPitch.pushBack(data[6]);
-        plYaw.pushBack(data[7]);
-        plZ.pushBack(data[8]);
+        //plPitch.pushBack(pitch);
+        plYaw.pushBack(yaw-offset_yaw);
+        plRoll.pushBack(-roll);
 
 
         //plPitch.pushBack(pitch*180/M_PI);
@@ -44,7 +46,7 @@ int main()
 
     plPitch.Plot();
     plYaw.Plot();
-    plZ.Plot();
+    plRoll.Plot();
 
     return 0;
 }

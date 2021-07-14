@@ -10,8 +10,7 @@
 //
 #include "imu3dmgx510.h"
 
-const char *PORT = "/dev/ttyUSB0";
-//
+
 
 
 
