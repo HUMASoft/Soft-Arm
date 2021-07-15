@@ -10,30 +10,26 @@
 //
 #include "imu3dmgx510.h"
 
-const char *PORT = "/dev/ttyUSB0";
-//
-
-
 int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado50-10V3.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_Vel10_50.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(3,3);
+    m1.SetupPositionMode(10,10);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(3,3);
+    m2.SetupPositionMode(10,10);
 
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(3,3);
+    m3.SetupPositionMode(10,10);
 
 
     //TableArmKinematics a("../Tabla170.csv");
