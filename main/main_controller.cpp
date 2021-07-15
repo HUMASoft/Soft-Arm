@@ -15,7 +15,7 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = -10; //ALPHA
+    ang[0] = 20; //ALPHA
     ang[1] = 0; //BETA
 
 
@@ -24,16 +24,16 @@ int main ()
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(6,6);
+    m1.SetupPositionMode(3,3);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(6,6);
+    m2.SetupPositionMode(3,3);
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(6,6);
+    m3.SetupPositionMode(3,3);
 
     double radio=0.0093;
     vector<double> v_lengths(3);
@@ -41,7 +41,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB2",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -57,7 +57,7 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conPPID(0,4,0,dts);
+    PIDBlock conPPID(1,0,0,dts);
 //    conPPID.AntiWindup(3,3);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
