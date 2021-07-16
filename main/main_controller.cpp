@@ -15,25 +15,26 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 20; //ALPHA
-    ang[1] = 0; //BETA
+    ang[0] = 10; //ALPHA
+    ang[1] = 20; //BETA
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test5_Control_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test6_Control_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(3,3);
+    m1.SetupPositionMode(10,10);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(3,3);
+    m2.SetupPositionMode(10,10);
+
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(3,3);
+    m3.SetupPositionMode(10,10);
 
     double radio=0.0093;
     vector<double> v_lengths(3);
@@ -57,13 +58,14 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conPPID(1,0,0,dts);
+    //PIDBlock conPPID(2.8,4,1,dts);
+    PIDBlock conPPID(0,4,0,dts);
 //    conPPID.AntiWindup(3,3);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
     //FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conYPID(2.8,4,1,dts);
+    PIDBlock conYPID(0,4,0,dts);
 //    conYPID.AntiWindup(3,3);
 
     //FPDBlock resetP(conP); //Used for control reset
@@ -87,7 +89,7 @@ int main ()
     cout<<"Calibrado"<<endl;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double interval=20; //in seconds
+    double interval=30; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
@@ -98,8 +100,8 @@ int main ()
         //ierror= ierror*M_PI/180; //degrees to rad
 
         //PLOT DE DATOS
-        probe.pushBack(pitch*180/M_PI);
-        probe1.pushBack(ierror[0]);
+        probe.pushBack(yaw*180/M_PI);
+        probe1.pushBack(ierror[1]);
         //probe2.pushBack(yaw*180/M_PI);
 
         //controller computes control signal FPD
@@ -109,9 +111,9 @@ int main ()
         //controller computes control signal PID
         cs[0] = ierror[0] > conPPID;
         cs[1] = ierror[1] > conYPID;
-        cs[1]=0;
+        //cs[0]=0;
 
-        probe2.pushBack(cs[0]);
+        probe2.pushBack(cs[1]);
         //cout << endl;
 
         if (!isnormal(cs[0])) cs[0] = 0;
