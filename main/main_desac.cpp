@@ -14,7 +14,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_Vel10_50_V2.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_Vel10_50_V3.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -100,7 +100,6 @@ int main ()
                 cout << endl;
             }
 
-
             m1.SetPosition(0);
             m2.SetPosition(0);
             m3.SetPosition(0);
@@ -114,12 +113,10 @@ int main ()
                 cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
                 cout << endl;
 
-
                 Ts.WaitSamplingTime();
             }
             misensor.Reset();
             sleep(2);
-
         }
 
     }
