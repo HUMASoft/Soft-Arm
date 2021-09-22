@@ -7,6 +7,10 @@
 
 int main ()
 {
+    string motor="m1";
+    int sentido=-1; // Neg Acortar Posi Alargar
+
+
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -33,11 +37,25 @@ int main ()
 
 //    double vel;
 
-    ////VELOCIDAD
+    ////VELOCIDAD negativo es acortar
 
-    m1.Setup_Velocity_Mode();
 
-    m1.SetVelocity(-1.5);
+    if (motor=="m1"){
+        m1.Setup_Velocity_Mode();
+        cout<< "Moving m1";
+        m1.SetVelocity(sentido*1);
+    }
+
+    if (motor=="m2"){
+        m2.Setup_Velocity_Mode();
+        cout<< "Moving m2";
+        m2.SetVelocity(sentido*1);
+    }
+    if (motor=="m3"){
+        m3.Setup_Velocity_Mode();
+        cout<< "Moving m3";
+        m3.SetVelocity(sentido*1);
+    }
 
 
     cout << "Enter to stop." <<endl;
@@ -49,7 +67,8 @@ int main ()
     getchar();
 
     m1.SetVelocity(0);
-
+    m2.SetVelocity(0);
+    m3.SetVelocity(0);
     ////POSICION
 
 //    cout << "Back 2 zero" << endl;

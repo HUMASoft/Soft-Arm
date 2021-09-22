@@ -57,6 +57,7 @@ int main()
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         cout<<"Calibrando"<<endl;
         cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
+        Ts.WaitSamplingTime();
     }
 
 
