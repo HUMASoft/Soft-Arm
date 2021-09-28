@@ -13,7 +13,7 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 35; //ALPHA
+    ang[0] = 32; //ALPHA
     ang[1] = 0; //BETA
 
     cout<< "456"<<endl;
