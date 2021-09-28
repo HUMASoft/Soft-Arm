@@ -8,6 +8,7 @@
 int main ()
 {
     string motor="m1";
+    int velo=1;
     int sentido=-1; // Neg Acortar Posi Alargar
 
 
@@ -42,19 +43,22 @@ int main ()
 
     if (motor=="m1"){
         m1.Setup_Velocity_Mode();
-        cout<< "Moving m1";
-        m1.SetVelocity(sentido*1);
+        cout<< "Moving m1 "<<endl;
+
+        m1.SetVelocity(sentido*velo);
     }
 
     if (motor=="m2"){
         m2.Setup_Velocity_Mode();
-        cout<< "Moving m2";
-        m2.SetVelocity(sentido*1);
+        cout<< "Moving m2 "<<endl;
+
+        m2.SetVelocity(sentido*velo);
     }
     if (motor=="m3"){
         m3.Setup_Velocity_Mode();
-        cout<< "Moving m3";
-        m3.SetVelocity(sentido*1);
+        cout<< "Moving m3 "<<endl;
+
+        m3.SetVelocity(sentido*velo);
     }
 
 

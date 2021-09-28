@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Cia402device.h"
-#include "CiA301CommPort.h"
+//#include "CiA301CommPort.h"
 #include "SocketCanPort.h"
 
 int main ()

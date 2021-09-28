@@ -13,27 +13,27 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 30; //ALPHA
+    ang[0] = 35; //ALPHA
     ang[1] = 0; //BETA
 
     cout<< "456"<<endl;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestPID_Control_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Open_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(6,6);
+    m1.SetupPositionMode(3,3);
 
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(6,6);
+    m2.SetupPositionMode(3,3);
 
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(6,6);
+    m3.SetupPositionMode(3,3);
 
     double radio=0.0093;
     vector<double> v_lengths(3);
@@ -67,8 +67,9 @@ int main ()
     valores[6]=40;
     valores[7]=-40;
 
-    valores[0]=0;
-    valores[4]=40;
+    //TEST
+    valores[0]=ang[0];
+    valores[4]=ang[1];
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it

@@ -15,11 +15,11 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 45; //ALPHA
-    ang[1] =45; //BETA
+    ang[0] =30; //ALPHA
+    ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestPID_Control_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test_Control_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -73,6 +73,8 @@ int main ()
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
     PIDBlock conPPID(0.18,1,0,dts);
+//    PIDBlock conPPID(0.3,1.8,0,dts);
+
     //PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
     //PIDBlock conPPID(0,4,0,dts);
@@ -106,7 +108,7 @@ int main ()
     cout<<"Calibrado"<<endl;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double interval=50; //in seconds
+    double interval=20; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
@@ -180,9 +182,9 @@ int main ()
 
     probe.Plot();
     probe1.Plot();
-    probe2.Plot();
-    probe3.Plot();
-    probe4.Plot();
+//    probe2.Plot();
+//    probe3.Plot();
+    //probe4.Plot();
 
 
     m1.SetPosition(0);
