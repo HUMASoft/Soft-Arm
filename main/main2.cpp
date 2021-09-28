@@ -88,7 +88,7 @@ int main ()
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
-        cout<<"Moving to Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
+        cout<<"Moving to Input Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
         interval=5;
         for (double t=0;t<interval; t+=dts)
         {

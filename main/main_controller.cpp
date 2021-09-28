@@ -15,7 +15,7 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] =30; //ALPHA
+    ang[0] =40; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
 
@@ -72,8 +72,9 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conPPID(0.18,1,0,dts);
-//    PIDBlock conPPID(0.3,1.8,0,dts);
+//    PIDBlock conPPID(0.18,1,0,dts);
+//    PIDBlock conPPID(0.95,1.6,0,dts);
+    PIDBlock conPPID(1.1,1.12,0,dts);
 
     //PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
