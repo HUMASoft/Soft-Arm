@@ -15,11 +15,11 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] =40; //ALPHA
+    ang[0] =30; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Test_Control_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestControl_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -72,9 +72,9 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-//    PIDBlock conPPID(0.18,1,0,dts);
+    PIDBlock conPPID(0.18,1,0,dts);
 //    PIDBlock conPPID(0.95,1.6,0,dts);
-    PIDBlock conPPID(1.1,1.12,0,dts);
+//    PIDBlock conPPID(1.1,1.12,0,dts);
 
     //PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
@@ -114,6 +114,10 @@ int main ()
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
 
+//        ang[0]=10*sin(t);
+
+//        ang[1]=10*cos(t);
+
         ierror[0] = ang[0] - pitch*180/M_PI;
         ierror[1] = ang[1] - yaw*180/M_PI;
 
@@ -140,8 +144,8 @@ int main ()
 
 
         //probe1.pushBack(ierror[0]);
-        probe2.pushBack(cs[0]);
-        probe3.pushBack(cs[1]);
+//        probe2.pushBack(cs[0]);
+//        probe3.pushBack(cs[1]);
         //cout << endl;
 
         if (!isnormal(cs[0])) cs[0] = 0;
@@ -162,9 +166,9 @@ int main ()
         posan2=(v_lengths[1])/radio;
         posan3=(v_lengths[2])/radio;
 
-//        probe2.pushBack(m2.GetPosition());
-//        probe3.pushBack(m2.GetVelocity());
-        probe4.pushBack(ierror[1]);
+        probe2.pushBack(m1.GetPosition());
+        probe3.pushBack(posan1);
+        probe4.pushBack(cs[0]);
 
         m1.SetPosition(posan1);
         m2.SetPosition(posan2);
@@ -183,9 +187,9 @@ int main ()
 
     probe.Plot();
     probe1.Plot();
-//    probe2.Plot();
-//    probe3.Plot();
-    //probe4.Plot();
+    probe2.Plot();
+    probe3.Plot();
+    probe4.Plot();
 
 
     m1.SetPosition(0);
