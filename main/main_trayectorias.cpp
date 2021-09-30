@@ -59,11 +59,11 @@ int main ()
     vector<double> cs(2); //CONTROL SIGNAL
     vector<double> valores(8);
     valores[0]=20;
-    valores[1]=-20;
+    valores[1]=20;
     valores[2]=0;
     valores[3]=0;
-    valores[4]=0;
-    valores[5]=0;
+    valores[4]=20;
+    valores[5]=-20;
     valores[6]=20;
     valores[7]=-20;
 
@@ -84,7 +84,7 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < 1 ; move++)
+    for (long move = 0; move < 4 ; move++)
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
@@ -92,13 +92,13 @@ int main ()
 
 
         cout<<"Moving to Input Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
-        interval=20;
+        interval=10;
         for (double t=0;t<interval; t+=dts)
         {
 
-            cs[0]=10*sin(t);
+//            cs[0]=10*sin(t);
 
-            cs[1]=10*cos(t);
+//            cs[1]=10*cos(t);
 
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 

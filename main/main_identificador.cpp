@@ -53,7 +53,7 @@ int main ()
 
     //identification
     ulong numOrder=0,denOrder=2;
-    ulong numOrder2=1,denOrder2=2;
+    ulong numOrder2=0,denOrder2=3;
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
     OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
@@ -142,9 +142,15 @@ int main ()
                 Ts.WaitSamplingTime();
             }
             cout <<"Done"<<endl;
+
             m1.SetPosition(0);
             m2.SetPosition(0);
             m3.SetPosition(0);
+            for (double t=0;t<4; t+=dts)
+            {
+                misensor.GetPitchRollYaw(pitch,roll,yaw);
+                Ts.WaitSamplingTime();
+            }
 
             sNum="";
             sDen="";
@@ -187,9 +193,6 @@ int main ()
                 {
                     sNum=sNum+ to_string(gainY*numY[i])+", ";
                 }
-
-
-
             for(int i = denY.size()-1; i>=0; i--)
                 {
                     sDen=sDen+", "+ to_string(denY[i]);
@@ -204,23 +207,14 @@ int main ()
                 {
                     sNum=sNum+ to_string(gainY2*numY2[i])+", ";
                 }
-
-
-
             for(int i = denY2.size()-1; i>=0; i--)
                 {
                     sDen=sDen+", "+ to_string(denY2[i]);
                 }
 
             data << sNum+sDen<<endl;
-
-
-            sleep(4);
         }
-
     }
-
-
     //sys.PrintZTransferFunction(dts);
 
     m1.SetPosition(0);
