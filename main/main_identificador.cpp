@@ -53,13 +53,31 @@ int main ()
 
     //identification
     ulong numOrder=0,denOrder=2;
+    ulong numOrder2=1,denOrder2=2;
 
-    OnlineSystemIdentification model(numOrder, denOrder );
+    OnlineSystemIdentification modelP(numOrder, denOrder );
+    OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
 
-    vector<double> num(numOrder+1),den(denOrder+1); //(order 0 also counts)
-    SystemBlock sys(num,den); //the resulting identification
+    OnlineSystemIdentification modelY(numOrder, denOrder );
+    OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
 
-    double gain;
+
+    vector<double> numP(numOrder+1),denP(denOrder+1); //(order 0 also counts)
+    SystemBlock sysP(numP,denP); //the resulting identification
+
+    vector<double> numP2(numOrder2+1),denP2(denOrder2+1); //(order 0 also counts)
+    SystemBlock sysP2(numP2,denP2); //the resulting identification
+
+    vector<double> numY(numOrder+1),denY(denOrder+1); //(order 0 also counts)
+    SystemBlock sysY(numY,denY); //the resulting identification
+
+    vector<double> numY2(numOrder2+1),denY2(denOrder2+1); //(order 0 also counts)
+    SystemBlock sysY2(numY2,denY2); //the resulting identification
+
+    double gainP;
+    double gainP2;
+    double gainY;
+    double gainY2;
 
     vector<double> cs(2); //CONTROL SIGNAL
 
@@ -83,16 +101,29 @@ int main ()
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Indentificacion_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV2_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
 
-                model.UpdateSystem(cs[0], pitch*180/M_PI);
+                modelP.UpdateSystem(cs[0], pitch*180/M_PI);
+                modelY.UpdateSystem(cs[1], yaw*180/M_PI);
 
-                model.GetSystemBlock(sys);
-                gain=sys.GetZTransferFunction(num,den);
+                modelP2.UpdateSystem(cs[0], pitch*180/M_PI);
+                modelY2.UpdateSystem(cs[1], yaw*180/M_PI);
+
+                modelP.GetSystemBlock(sysP);
+                gainP=sysP.GetZTransferFunction(numP,denP);
+
+                modelY.GetSystemBlock(sysY);
+                gainY=sysY.GetZTransferFunction(numY,denY);
+
+                modelP2.GetSystemBlock(sysP2);
+                gainP2=sysP2.GetZTransferFunction(numP2,denP2);
+
+                modelY2.GetSystemBlock(sysY2);
+                gainY2=sysY2.GetZTransferFunction(numY2,denY2);
 
                 v_lengths[0]=0.001*( cs[0] / 1.5);
                 v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
@@ -118,20 +149,72 @@ int main ()
             sNum="";
             sDen="";
 
-            for(int i = 0; i < num.size(); i++)
+            for(int i = numP.size()-1; i>=0; i--)
                 {
-                    sNum=sNum+ to_string(gain*num[i])+", ";
+                    sNum=sNum+ to_string(gainP*numP[i])+", ";
                 }
 
 
 
-            for(int i = den.size()-1; i>=0; i--)
+            for(int i = denP.size()-1; i>=0; i--)
                 {
-                    sDen=sDen+", "+ to_string(den[i]);
+                    sDen=sDen+", "+ to_string(denP[i]);
                 }
 
-            cout <<sNum+sDen<<endl;
             data << sNum+sDen<<endl;
+
+            sNum="";
+            sDen="";
+
+            for(int i = numP2.size()-1; i>=0; i--)
+                {
+                    sNum=sNum+ to_string(gainP2*numP2[i])+", ";
+                }
+
+
+
+            for(int i = denP2.size()-1; i>=0; i--)
+                {
+                    sDen=sDen+", "+ to_string(denP2[i]);
+                }
+
+            data << sNum+sDen<<endl;
+
+            sNum="";
+            sDen="";
+
+            for(int i = numY.size()-1; i>=0; i--)
+                {
+                    sNum=sNum+ to_string(gainY*numY[i])+", ";
+                }
+
+
+
+            for(int i = denY.size()-1; i>=0; i--)
+                {
+                    sDen=sDen+", "+ to_string(denY[i]);
+                }
+
+            data << sNum+sDen<<endl;
+
+            sNum="";
+            sDen="";
+
+            for(int i = numY2.size()-1; i>=0; i--)
+                {
+                    sNum=sNum+ to_string(gainY2*numY2[i])+", ";
+                }
+
+
+
+            for(int i = denY2.size()-1; i>=0; i--)
+                {
+                    sDen=sDen+", "+ to_string(denY2[i]);
+                }
+
+            data << sNum+sDen<<endl;
+
+
             sleep(4);
         }
 
