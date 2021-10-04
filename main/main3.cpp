@@ -6,32 +6,34 @@
 #include <Kinematics.h>
 #include "fcontrol.h"
 #include "IPlot.h"
-
-//
 #include "imu3dmgx510.h"
+
+
 int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 30; //ALPHA
+    ang[0] = 20; //ALPHA
     ang[1] = 0; //BETA
 
+    cout<< "456"<<endl;
 
-    ofstream data("/home/humasoft/Soft-Arm/graphs/grandes.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest30min.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(20,20);
+    m1.SetupPositionMode(3,3);
+
     SocketCanPort pm2("can1");
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(20,20);
+    m2.SetupPositionMode(3,3);
 
     SocketCanPort pm3("can1");
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(20,20);
+    m3.SetupPositionMode(3,3);
 
     double radio=0.0093;
     vector<double> v_lengths(3);
@@ -46,18 +48,28 @@ int main ()
     SamplingTime Ts;
     Ts.SetSamplingTime(dts);
 
-
+    //plot
     IPlot probe(dts,"Plot Pitch");
-    IPlot probe1(dts,"Plot Input");
-    IPlot probe2(dts,"Plot L1");
-    IPlot probe3(dts,"Plot L2");
-    IPlot probe4(dts,"Plot L3");
+    IPlot probe1(dts,"Plot Yaw");
+    IPlot probe2(dts,"Plot CPitch");
+    IPlot probe3(dts,"Plot m2");
+    IPlot probe4(dts,"Plot m3");
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
+    vector<double> valores(8);
+    valores[0]=40;
+    valores[1]=0;
+    valores[2]=0;
+    valores[3]=0;
+    valores[4]=0;
+    valores[5]=20;
+    valores[6]=40;
+    valores[7]=-40;
 
-    cs[0]=ang[0];
-    cs[1]=ang[1];
+    //TEST
+    valores[0]=ang[0];
+    valores[4]=ang[1];
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
@@ -70,50 +82,70 @@ int main ()
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
     }
     cout<<"Calibrado"<<endl;
-    cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double interval=50; //in seconds
+    double interval=2000; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
-        cs[0]=10*sin(t*5);
-        misensor.GetPitchRollYaw(pitch,roll,yaw);
-        probe.pushBack(pitch*180/M_PI);
-        probe1.pushBack(cs[0]);
-
-        v_lengths[0]=0.001*( cs[0] / 1.5);
-        //v_lengths[1]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
-        //v_lengths[2]=0.001*( (cs[0] / -3) - (cs[1] / 1.732) );
-
-        // INVERTIDO
-        v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
-        v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) ); //Antiguo tendon 2
+        cs[0]=20*(sin(t)+sin(t/4))+3*double(rand())/(RAND_MAX);//1*(sin(t)+sin(t/4))+ rand()*3;
+        cs[1]=20*(sin(t/2)+sin(t/7))+3*double(rand())/(RAND_MAX);
 
 
 
-        posan1=(v_lengths[0])/radio;
-        posan2=(v_lengths[1])/radio;
-        posan3=(v_lengths[2])/radio;
+            misensor.GetPitchRollYaw(pitch,roll,yaw);
+
+//            probe.pushBack(pitch*180/M_PI);
+//            probe1.pushBack(yaw*180/M_PI);
+//            probe2.pushBack(cs[0]);
+//            probe3.pushBack(cs[1]);
+            probe2.pushBack(m2.GetPosition());
+            probe3.pushBack(m3.GetPosition());
+
+            if (!isnormal(cs[0])) cs[0] = 0;
+
+            if (!isnormal(cs[1])) cs[1] = 0;
 
 
-        probe2.pushBack(m2.GetPosition());
-        probe3.pushBack(m2.GetVelocity());
-        probe4.pushBack(posan2);
+            v_lengths[0]=0.001*( cs[0] / 1.5);
+            v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) );
+            v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
+
+            posan1=(v_lengths[0])/radio;
+            posan2=(v_lengths[1])/radio;
+            posan3=(v_lengths[2])/radio;
 
 
-        m1.SetPosition(posan1);
-        m2.SetPosition(posan2);
-        m3.SetPosition(posan3);
+//            probe4.pushBack(posan2);
 
-    }
+            m1.SetPosition(posan1);
+            m2.SetPosition(posan2);
+            m3.SetPosition(posan3);
 
-    probe.Plot();
-    probe1.Plot();
-    probe2.Plot();
-    probe3.Plot();
-    probe4.Plot();
+            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+            //cout << endl;
+            Ts.WaitSamplingTime();
+        }
+        interval=3;
+        for (double t=0;t<interval; t+=dts)
+        {
+            misensor.GetPitchRollYaw(pitch,roll,yaw);
 
-    m3.SetPosition(0);
-    m2.SetPosition(0);
-    m1.SetPosition(0);
-    //sleep(4);
+            probe.pushBack(pitch*180/M_PI);
+            probe1.pushBack(yaw*180/M_PI);
+//            probe2.pushBack(0);
+//            probe3.pushBack(0);
+            probe2.pushBack(m2.GetPosition());
+            probe3.pushBack(m3.GetPosition());
+
+            m1.SetPosition(0);
+            m2.SetPosition(0);
+            m3.SetPosition(0);
+            Ts.WaitSamplingTime();
+        }
+
+    cout <<"Done" << endl;
+//    probe.Plot();
+//    probe1.Plot();
+//    probe2.Plot();
+//    probe3.Plot();
+//    probe4.Plot();
 }

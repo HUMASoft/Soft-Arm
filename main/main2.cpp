@@ -13,12 +13,12 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 0; //ALPHA
-    ang[1] = -20; //BETA
+    ang[0] = 20; //ALPHA
+    ang[1] = 0; //BETA
 
     cout<< "456"<<endl;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Open_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest_P.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -84,7 +84,7 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < 2 ; move++)
+    for (long move = 0; move < 4 ; move++)
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
