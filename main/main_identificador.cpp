@@ -96,12 +96,12 @@ int main ()
     string sDen="";
 
 
-    for (cs[0] = -ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
+    for (cs[0] = 0 ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)//-ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
     {
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV2_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV3_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
@@ -141,7 +141,8 @@ int main ()
                 //cout << endl;
                 Ts.WaitSamplingTime();
             }
-            cout <<"Done"<<endl;
+            cout <<"Done:"<<endl;
+            cout<< "Alpha-"<<cs[0]<< ";   Yaw-"<<cs[1] <<endl;
 
             m1.SetPosition(0);
             m2.SetPosition(0);
