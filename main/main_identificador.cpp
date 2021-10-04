@@ -79,6 +79,9 @@ int main ()
     double gainY;
     double gainY2;
 
+
+    IPlot probe(dts,"Plot Pitch");
+
     vector<double> cs(2); //CONTROL SIGNAL
 
 
@@ -96,16 +99,18 @@ int main ()
     string sDen="";
 
 
-    for (cs[0] = 0 ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)//-ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
+    for (cs[0] = 0 ; cs[0] <=  ang[0] ; cs[0]= cs[0]+10)//-ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
     {
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV3_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV4_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
+
+                probe.pushBack(pitch*180/M_PI);
 
                 modelP.UpdateSystem(cs[0], pitch*180/M_PI);
                 modelY.UpdateSystem(cs[1], yaw*180/M_PI);
@@ -142,7 +147,7 @@ int main ()
                 Ts.WaitSamplingTime();
             }
             cout <<"Done:"<<endl;
-            cout<< "Alpha-"<<cs[0]<< ";   Yaw-"<<cs[1] <<endl;
+            cout<< "Alpha:"<<cs[0]<< ";   Yaw:"<<cs[1] <<endl;
 
             m1.SetPosition(0);
             m2.SetPosition(0);
@@ -150,6 +155,7 @@ int main ()
             for (double t=0;t<4; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
+                probe.pushBack(pitch*180/M_PI);
                 Ts.WaitSamplingTime();
             }
 
@@ -214,7 +220,10 @@ int main ()
                 }
 
             data << sNum+sDen<<endl;
+
+
         }
+        probe.Plot();
     }
     //sys.PrintZTransferFunction(dts);
 

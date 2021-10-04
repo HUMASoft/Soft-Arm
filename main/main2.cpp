@@ -13,8 +13,8 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 32; //ALPHA
-    ang[1] = 0; //BETA
+    ang[0] = 0; //ALPHA
+    ang[1] = -20; //BETA
 
     cout<< "456"<<endl;
 
@@ -59,11 +59,11 @@ int main ()
     vector<double> cs(2); //CONTROL SIGNAL
     vector<double> valores(8);
     valores[0]=40;
-    valores[1]=-40;
+    valores[1]=0;
     valores[2]=0;
     valores[3]=0;
     valores[4]=0;
-    valores[5]=0;
+    valores[5]=20;
     valores[6]=40;
     valores[7]=-40;
 
@@ -84,7 +84,7 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < 1 ; move++)
+    for (long move = 0; move < 2 ; move++)
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
@@ -96,9 +96,10 @@ int main ()
 
             probe.pushBack(pitch*180/M_PI);
             probe1.pushBack(yaw*180/M_PI);
-            probe2.pushBack(cs[0]);
-            probe3.pushBack(cs[1]);
-
+//            probe2.pushBack(cs[0]);
+//            probe3.pushBack(cs[1]);
+            probe2.pushBack(m2.GetPosition());
+            probe3.pushBack(m3.GetPosition());
 
             if (!isnormal(cs[0])) cs[0] = 0;
 
@@ -131,8 +132,10 @@ int main ()
 
             probe.pushBack(pitch*180/M_PI);
             probe1.pushBack(yaw*180/M_PI);
-            probe2.pushBack(0);
-            probe3.pushBack(0);
+//            probe2.pushBack(0);
+//            probe3.pushBack(0);
+            probe2.pushBack(m2.GetPosition());
+            probe3.pushBack(m3.GetPosition());
 
             m1.SetPosition(0);
             m2.SetPosition(0);
