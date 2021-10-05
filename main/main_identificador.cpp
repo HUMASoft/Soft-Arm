@@ -94,17 +94,23 @@ int main ()
     }
     cout<<"Calibrado"<<endl;
 
-    double interval=10; //in seconds
+    double interval=6; //in seconds
     string sNum="";
     string sDen="";
 
 
-    for (cs[0] = 0 ; cs[0] <=  ang[0] ; cs[0]= cs[0]+10)//-ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
+    for (cs[0] =-ang[0] ; cs[0] <= ang[0] ; cs[0]= cs[0]+10)
     {
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV4_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            OnlineSystemIdentification modelP(numOrder, denOrder );
+            OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
+
+            OnlineSystemIdentification modelY(numOrder, denOrder );
+            OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
+
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV3_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
@@ -117,18 +123,6 @@ int main ()
 
                 modelP2.UpdateSystem(cs[0], pitch*180/M_PI);
                 modelY2.UpdateSystem(cs[1], yaw*180/M_PI);
-
-                modelP.GetSystemBlock(sysP);
-                gainP=sysP.GetZTransferFunction(numP,denP);
-
-                modelY.GetSystemBlock(sysY);
-                gainY=sysY.GetZTransferFunction(numY,denY);
-
-                modelP2.GetSystemBlock(sysP2);
-                gainP2=sysP2.GetZTransferFunction(numP2,denP2);
-
-                modelY2.GetSystemBlock(sysY2);
-                gainY2=sysY2.GetZTransferFunction(numY2,denY2);
 
                 v_lengths[0]=0.001*( cs[0] / 1.5);
                 v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
@@ -152,12 +146,25 @@ int main ()
             m1.SetPosition(0);
             m2.SetPosition(0);
             m3.SetPosition(0);
-            for (double t=0;t<4; t+=dts)
+
+            for (double t=0;t<5; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
                 probe.pushBack(pitch*180/M_PI);
                 Ts.WaitSamplingTime();
             }
+
+            modelP.GetSystemBlock(sysP);
+            gainP=sysP.GetZTransferFunction(numP,denP);
+
+            modelY.GetSystemBlock(sysY);
+            gainY=sysY.GetZTransferFunction(numY,denY);
+
+            modelP2.GetSystemBlock(sysP2);
+            gainP2=sysP2.GetZTransferFunction(numP2,denP2);
+
+            modelY2.GetSystemBlock(sysY2);
+            gainY2=sysY2.GetZTransferFunction(numY2,denY2);
 
             sNum="";
             sDen="";
