@@ -15,11 +15,11 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] =30; //ALPHA
+    ang[0] =20; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestControl_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestC1_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -72,9 +72,9 @@ int main ()
     //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conPPID(0.18,1,0,dts);
+//    PIDBlock conPPID(0.18,1,0,dts);
 //    PIDBlock conPPID(0.95,1.6,0,dts);
-//    PIDBlock conPPID(1.1,1.12,0,dts);
+    PIDBlock conPPID(0.1,0,0,dts);
 
     //PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
@@ -135,17 +135,17 @@ int main ()
 
 
         cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
+        //cs[1] = ierror[1] > conYPID;
 
 
 
         //SIN YAW
-        //cs[1]=0;
+        cs[1]=ang[1];
 
 
         //probe1.pushBack(ierror[0]);
 //        probe2.pushBack(cs[0]);
-//        probe3.pushBack(cs[1]);
+        probe3.pushBack(cs[0]);
         //cout << endl;
 
         if (!isnormal(cs[0])) cs[0] = 0;
@@ -167,7 +167,7 @@ int main ()
         posan3=(v_lengths[2])/radio;
 
         probe2.pushBack(m1.GetPosition());
-        probe3.pushBack(posan1);
+        //probe3.pushBack(posan1);
         probe4.pushBack(cs[0]);
 
         m1.SetPosition(posan1);

@@ -15,7 +15,7 @@
 
 int main ()
 {
-
+    bool d_random=1;
     vector<double> ang(2);
     ang[0] = 50; //ALPHA
     ang[1] =50; //BETA
@@ -81,6 +81,7 @@ int main ()
 
 
     IPlot probe(dts,"Plot Pitch");
+    IPlot probe2(dts,"Plot Input");
 
     vector<double> cs(2); //CONTROL SIGNAL
 
@@ -93,6 +94,56 @@ int main ()
         misensor.GetPitchRollYaw(pitch,roll,yaw);
     }
     cout<<"Calibrado"<<endl;
+
+    if(d_random==1){
+
+        cs[0]=0;
+        cs[1]=0;
+        double tmax=5;
+        double iderror=0;
+
+        ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionRand.csv",std::ofstream::out); // /home/humasoft/code/graficas
+
+        for (double t=0; t<tmax; t+=dts)
+
+        {
+            misensor.GetPitchRollYaw(pitch,roll,yaw);
+            //cs[0]=1+0.0001*((rand() % 10 + 1)-5); //u_{i-1}
+            cs[0]=20+0.001*((rand() % 10 + 1)-5); //u_{i-1}
+
+            iderror=modelP2.UpdateSystem(cs[0],pitch);
+
+
+            probe.pushBack(pitch*180/M_PI);
+            probe2.pushBack(cs[0]);
+            //Gz.PrintParamsVector();
+
+            v_lengths[0]=0.001*( cs[0] / 1.5);
+            v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
+            v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) ); //Antiguo tendon 2
+
+            posan1=(v_lengths[0])/radio;
+            posan2=(v_lengths[1])/radio;
+            posan3=(v_lengths[2])/radio;
+
+            m1.SetPosition(posan1);
+            m2.SetPosition(posan2);
+            m3.SetPosition(posan3);
+
+            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+            //cout << endl;
+            Ts.WaitSamplingTime();
+        }
+
+        modelP2.GetSystemBlock(sysP2);
+        gainP2=sysP2.GetZTransferFunction(numP2,denP2);
+        sysP2.PrintZTransferFunction(dts);
+        probe.Plot();
+        probe2.Plot();
+
+
+
+    } else{
 
     double interval=6; //in seconds
     string sNum="";
@@ -232,7 +283,7 @@ int main ()
         }
         probe.Plot();
     }
-    //sys.PrintZTransferFunction(dts);
+    }
 
     m1.SetPosition(0);
     m2.SetPosition(0);
