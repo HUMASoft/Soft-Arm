@@ -55,7 +55,7 @@ int main ()
 
     //identification
     ulong numOrder=0,denOrder=2;
-    ulong numOrder2=1,denOrder2=3;// denOrder2=3;
+    ulong numOrder2=0,denOrder2=3;// denOrder2=3;
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
     OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
@@ -88,6 +88,7 @@ int main ()
 
 
     vector<double> cs(2); //CONTROL SIGNAL
+    vector<double> csr(2); //CONTROL SIGNAL AUX
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
@@ -175,6 +176,10 @@ int main ()
     {
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
+            csr[0]=cs[0];
+            cs[0]=cs[0]+0.001*((rand() % 10 + 1)-5);
+            csr[1]=cs[1];
+            cs[1]=cs[1]+0.001*((rand() % 10 + 1)-5);
 
             OnlineSystemIdentification modelP(numOrder, denOrder );
             OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
@@ -182,7 +187,7 @@ int main ()
             OnlineSystemIdentification modelY(numOrder, denOrder );
             OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionV3_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionRand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
@@ -213,7 +218,9 @@ int main ()
                 Ts.WaitSamplingTime();
             }
             cout <<"Done:"<<endl;
-            cout<< "Alpha:"<<cs[0]<< ";   Yaw:"<<cs[1] <<endl;
+            cout<< "Alpha:"<<cs[0]<< ";   Beta:"<<cs[1] <<endl;
+            cs[0]=csr[0];
+            cs[1]=csr[1];
 
             m1.SetPosition(0);
             m2.SetPosition(0);
