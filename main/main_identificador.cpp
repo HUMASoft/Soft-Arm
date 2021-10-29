@@ -8,6 +8,8 @@
 #include <Kinematics.h>
 #include "fcontrol.h"
 #include "IPlot.h"
+#include <complex>
+#include <math.h>
 
 //
 #include "imu3dmgx510.h"
@@ -53,7 +55,7 @@ int main ()
 
     //identification
     ulong numOrder=0,denOrder=2;
-    ulong numOrder2=0,denOrder2=3;
+    ulong numOrder2=1,denOrder2=3;// denOrder2=3;
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
     OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
@@ -82,6 +84,8 @@ int main ()
 
     IPlot probe(dts,"Plot Pitch");
     IPlot probe2(dts,"Plot Input");
+    IPlot probe3(dts,"Plot Id");
+
 
     vector<double> cs(2); //CONTROL SIGNAL
 
@@ -111,7 +115,9 @@ int main ()
             //cs[0]=1+0.0001*((rand() % 10 + 1)-5); //u_{i-1}
             cs[0]=20+0.001*((rand() % 10 + 1)-5); //u_{i-1}
 
-            iderror=modelP2.UpdateSystem(cs[0],pitch);
+            iderror=modelP2.UpdateSystem(cs[0],pitch*180/M_PI);
+            cout << "id error at "  << t << " = "<< iderror << endl;
+
 
 
             probe.pushBack(pitch*180/M_PI);
@@ -136,10 +142,25 @@ int main ()
         }
 
         modelP2.GetSystemBlock(sysP2);
-        gainP2=sysP2.GetZTransferFunction(numP2,denP2);
+        //gainP2=sysP2.GetZTransferFunction(numP2,denP2);
         sysP2.PrintZTransferFunction(dts);
         probe.Plot();
         probe2.Plot();
+
+
+        double out=0;
+        for (double t=0; t<tmax; t+=dts)
+
+        {
+            cs[0]=20;//*(rand() % 10 + 1)-5;
+            out=cs[0]> sysP2;
+            probe3.pushBack(out);
+            //Gz.PrintZTransferFunction(dts);
+            //Gz.PrintParamsVector();
+
+        }
+
+        probe3.Plot();
 
 
 
