@@ -36,7 +36,11 @@ int main()
     double a3=1;
 
 
-    SystemBlock sys(vector<double>{1},vector<double>{a0,a1,a2,a3});
+
+
+//    SystemBlock sys(vector<double>{1},vector<double>{a0,a1,a2,a3});
+    SystemBlock sys(vector<double>{0.0004934},vector<double>{-0.8377,2.66,-2.821,1});
+
 //    SystemBlock sys2(1,0,-p2r,1);
 //    SystemBlock sys(vector<double>{1},vector<double>{-p2r*(p1r*p1r+p1i*p1i),-2*p1r,1});
 
@@ -58,7 +62,7 @@ int main()
 
     {
 
-        in=1+0.0001*((rand() % 10 + 1)-5); //u_{i-1}
+        in=1+0.01*((rand() % 10 + 1)-5); //u_{i-1}
         out=in > sys ;//y_{i}
 
         iderror=Gz.UpdateSystem(in,out);

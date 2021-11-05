@@ -55,10 +55,13 @@ int main ()
 
     //identification
     ulong numOrder=0,denOrder=2;
-    ulong numOrder2=0,denOrder2=3;// denOrder2=3;
+    ulong numOrder2=0,denOrder2=2;// denOrder2=3;
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
-    OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
+    OnlineSystemIdentification modelP2 (numOrder2, denOrder2, 0.94 );
+    modelP2.SetDelay(3);
+
+
 
     OnlineSystemIdentification modelY(numOrder, denOrder );
     OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
@@ -99,6 +102,7 @@ int main ()
         misensor.GetPitchRollYaw(pitch,roll,yaw);
     }
     cout<<"Calibrado"<<endl;
+    double off_pitch=pitch;
 
     if(d_random==1){
 
@@ -113,12 +117,15 @@ int main ()
 
         {
             misensor.GetPitchRollYaw(pitch,roll,yaw);
+
+            pitch=pitch-off_pitch;
             //cs[0]=1+0.0001*((rand() % 10 + 1)-5); //u_{i-1}
-            cs[0]=20+0.001*((rand() % 10 + 1)-5); //u_{i-1}
+            //cs[0]=20+0.01*((rand() % 10 + 1)-5); //u_{i-1}
+            cs[0]=20+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
+
 
             iderror=modelP2.UpdateSystem(cs[0],pitch*180/M_PI);
             cout << "id error at "  << t << " = "<< iderror << endl;
-
 
 
             probe.pushBack(pitch*180/M_PI);
@@ -146,7 +153,7 @@ int main ()
         //gainP2=sysP2.GetZTransferFunction(numP2,denP2);
         sysP2.PrintZTransferFunction(dts);
         probe.Plot();
-        probe2.Plot();
+        //probe2.Plot();
 
 
         double out=0;
@@ -312,6 +319,7 @@ int main ()
         probe.Plot();
     }
     }
+    modelP2.PrintZTransferFunction(dts);
 
     m1.SetPosition(0);
     m2.SetPosition(0);

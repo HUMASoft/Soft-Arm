@@ -73,18 +73,21 @@ int main ()
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
 //    PIDBlock conPPID(0.18,1,0,dts);
-//    PIDBlock conPPID(0.95,1.6,0,dts);
-    PIDBlock conPPID(0.1,0,0,dts);
+//    PIDBlock conPPID(1.2,1.6,0,dts);
+//    PIDBlock conPPID(0.1,1,0,dts);
 
     //PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
-    //PIDBlock conPPID(0,4,0,dts);
+
+//    PIDBlock conPPID(0.5,2.8,0,dts);
+    PIDBlock conPPID(0.8,2.8,0,dts);
+
 //    conPPID.AntiWindup(3,3);
 
     //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
     //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
     //FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conYPID(0.1,1,0,dts);
+    PIDBlock conYPID(1.2,1.6,0,dts);
     //PIDBlock conYPID(0,4,0,dts);
 //    conYPID.AntiWindup(3,3);
 
@@ -109,7 +112,7 @@ int main ()
     cout<<"Calibrado"<<endl;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double interval=20; //in seconds
+    double interval=15; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
@@ -140,12 +143,13 @@ int main ()
 
 
         //SIN YAW
+        //cs[0]=ang[0];
         cs[1]=ang[1];
 
 
         //probe1.pushBack(ierror[0]);
-//        probe2.pushBack(cs[0]);
-        probe3.pushBack(cs[0]);
+        probe2.pushBack(cs[0]);
+        probe3.pushBack(cs[1]);
         //cout << endl;
 
         if (!isnormal(cs[0])) cs[0] = 0;
@@ -166,9 +170,9 @@ int main ()
         posan2=(v_lengths[1])/radio;
         posan3=(v_lengths[2])/radio;
 
-        probe2.pushBack(m1.GetPosition());
+        //probe2.pushBack(m1.GetPosition());
         //probe3.pushBack(posan1);
-        probe4.pushBack(cs[0]);
+        //probe4.pushBack(cs[0]);
 
         m1.SetPosition(posan1);
         m2.SetPosition(posan2);
@@ -186,10 +190,10 @@ int main ()
     //conY = FPDBlock(resetY); //Reset?
 
     probe.Plot();
-    probe1.Plot();
+    //probe1.Plot();
     probe2.Plot();
-    probe3.Plot();
-    probe4.Plot();
+    //probe3.Plot();
+    //probe4.Plot();
 
 
     m1.SetPosition(0);

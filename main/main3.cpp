@@ -8,9 +8,50 @@
 #include "IPlot.h"
 #include "imu3dmgx510.h"
 
+#include <NatNetTypes.h>
+#include <NatNetCAPI.h>
+#include <NatNetClient.h>
+
+#include <inttypes.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <fstream>
+#include <vector>
+
+int connectClient();
+int startRecording();
+int stopRecording();
+
+NatNetClient* g_pClient = NULL;
+sNatNetClientConnectParams g_connectParams;
+sServerDescription g_serverDescription;
+int g_analogSamplesPerMocapFrame = 0;
+static const ConnectionType kDefaultConnectionType = ConnectionType_Multicast;
+
 
 int main ()
 {
+
+// print version info
+    unsigned char ver[4];
+    NatNet_GetVersion( ver );
+    printf( "Trigger OptiTrack Client (NatNet ver. %d.%d.%d.%d)\n", ver[0], ver[1], ver[2], ver[3] );
+    g_pClient = new NatNetClient();
+    g_connectParams.connectionType = kDefaultConnectionType;
+    g_connectParams.serverAddress = "2.2.2.107";
+
+    int iResult;
+    iResult = connectClient();
+    if (iResult != ErrorCode_OK)
+    {
+        printf("Error initializing client. Exiting\n");
+        return 1;
+    }
+    else
+    {
+        printf("Client initialized and ready.\n");
+    }
 
     vector<double> ang(2);
     ang[0] = 20; //ALPHA
@@ -18,7 +59,7 @@ int main ()
 
     cout<< "456"<<endl;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest30min.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest20min2.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     SocketCanPort pm1("can1");
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
@@ -83,22 +124,33 @@ int main ()
     }
     cout<<"Calibrado"<<endl;
 
-    double interval=2000; //in seconds
+
+    iResult = startRecording();
+
+    if (iResult != ErrorCode_OK)
+        {
+            printf("Error sending 'rec' instruction. Exiting");
+            return 1;
+        }
+        else
+        {
+            printf("Client send rec instruction successfully.\n");
+        }
+
+    double interval=600; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
         cs[0]=20*(sin(t)+sin(t/4))+3*double(rand())/(RAND_MAX);//1*(sin(t)+sin(t/4))+ rand()*3;
-        cs[1]=20*(sin(t/2)+sin(t/7))+3*double(rand())/(RAND_MAX);
+        cs[1]=20*(sin(t/3)+sin(t/7))+3*double(rand())/(RAND_MAX);
 
 
 
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
-//            probe.pushBack(pitch*180/M_PI);
-//            probe1.pushBack(yaw*180/M_PI);
-//            probe2.pushBack(cs[0]);
-//            probe3.pushBack(cs[1]);
-            probe2.pushBack(m2.GetPosition());
-            probe3.pushBack(m3.GetPosition());
+            probe.pushBack(pitch*180/M_PI);
+            probe1.pushBack(yaw*180/M_PI);
+            probe2.pushBack(cs[0]);
+            probe3.pushBack(cs[1]);
 
             if (!isnormal(cs[0])) cs[0] = 0;
 
@@ -120,21 +172,32 @@ int main ()
             m2.SetPosition(posan2);
             m3.SetPosition(posan3);
 
-            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+            data << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() <<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
             //cout << endl;
             Ts.WaitSamplingTime();
         }
         interval=3;
+
+        iResult = stopRecording();
+
+        if (iResult != ErrorCode_OK)
+        {
+            printf("Error sending 'stop' instruction. Exiting");
+            return 1;
+        }
+        else
+        {
+            printf("Client send stop instruction successfully.\n");
+        }
+
         for (double t=0;t<interval; t+=dts)
         {
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
             probe.pushBack(pitch*180/M_PI);
             probe1.pushBack(yaw*180/M_PI);
-//            probe2.pushBack(0);
-//            probe3.pushBack(0);
-            probe2.pushBack(m2.GetPosition());
-            probe3.pushBack(m3.GetPosition());
+            probe2.pushBack(0);
+            probe3.pushBack(0);
 
             m1.SetPosition(0);
             m2.SetPosition(0);
@@ -143,9 +206,97 @@ int main ()
         }
 
     cout <<"Done" << endl;
-//    probe.Plot();
-//    probe1.Plot();
-//    probe2.Plot();
-//    probe3.Plot();
+    probe.Plot();
+    probe1.Plot();
+    probe2.Plot();
+    probe3.Plot();
 //    probe4.Plot();
+
+
+}
+
+// Establish a NatNet Client connection
+int connectClient()
+{
+    // Release previous server
+    g_pClient->Disconnect();
+
+    // Init Client and connect to NatNet server
+    int retCode = g_pClient->Connect( g_connectParams );
+    if (retCode != ErrorCode_OK)
+    {
+        printf("Unable to connect to server.  Error code: %d. Exiting\n", retCode);
+        return ErrorCode_Internal;
+    }
+    return ErrorCode_OK;
+}
+
+int startRecording()
+{
+    void* pResult;
+    int nBytes = 0;
+    ErrorCode ret = ErrorCode_OK;
+    std::string command = "StartRecording";
+
+    // Release previous server
+    g_pClient->Disconnect();
+
+    // Init Client and connect to NatNet server
+    int retCode = g_pClient->Connect( g_connectParams );
+    if (retCode != ErrorCode_OK)
+    {
+        printf("Unable to connect to server.  Error code: %d. Exiting\n", retCode);
+        return ErrorCode_Internal;
+    }
+    else
+    {
+        // connection succeeded
+        ret = g_pClient->SendMessageAndWait("StartRecording", 3, 100, &pResult, &nBytes);
+        if (ret == ErrorCode_OK)
+        {
+            int opResult = *((int*)pResult);
+            if (opResult == 0)
+                printf("%s handled and succeeded.\n", command.c_str());
+            else
+                printf("&%s handled but failed.\n", command.c_str());
+        }
+        else
+            printf("Error sending command: %s.\n", command.c_str());
+    }
+    return ErrorCode_OK;
+}
+
+int stopRecording()
+{
+    void* pResult;
+    int nBytes = 0;
+    ErrorCode ret = ErrorCode_OK;
+    std::string command = "StopRecording";
+
+    // Release previous server
+    g_pClient->Disconnect();
+
+    // Init Client and connect to NatNet server
+    int retCode = g_pClient->Connect( g_connectParams );
+    if (retCode != ErrorCode_OK)
+    {
+        printf("Unable to connect to server.  Error code: %d. Exiting\n", retCode);
+        return ErrorCode_Internal;
+    }
+    else
+    {
+        // connection succeeded
+        ret = g_pClient->SendMessageAndWait(command.c_str(), 3, 100, &pResult, &nBytes);
+        if (ret == ErrorCode_OK)
+        {
+            int opResult = *((int*)pResult);
+            if (opResult == 0)
+                printf("%s handled and succeeded.\n", command.c_str());
+            else
+                printf("&%s handled but failed.\n", command.c_str());
+        }
+        else
+            printf("Error sending command: %s.\n", command.c_str());
+    }
+    return ErrorCode_OK;
 }

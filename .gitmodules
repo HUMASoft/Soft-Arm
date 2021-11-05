@@ -12,4 +12,7 @@
 	url = https://github.com/munozyanez/i-plot.git
 [submodule "lib/fcontrol"]
 	path = lib/fcontrol
-	url = https://github.com/munozyanez/fcontrol.git
+	url = https://gitlab.com/munoz.yanez/fcontrol.git
+[submodule "lib/-f"]
+	path = lib/-f
+	url = https://gitlab.com/munoz.yanez/fcontrol.git

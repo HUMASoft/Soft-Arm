@@ -5,6 +5,17 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INCLUDE_CURRENT_DIR TRUE) # yarp plugin builder needs this
+
+# --- INCLUDE libNatNetLibShared.so LIBRARY TO PROJECT
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lNatNetLibShared")
+set (NATNET /usr/local/include/natnet)      # ruta donde se ubican las cabeceras
+find_library (NATNET_LIB NatNetLibShared)   # NATNET_BIB guarda la variable de la ruta donde se ubica libNatNetLibShared.so
+
+message("NATNET_LIB: " ${NATNET_LIB})
+
+
+include_directories(${NATNET})
 
 aux_source_directory(main SRC_LIST)
 aux_source_directory(tools SRC_LIST)
