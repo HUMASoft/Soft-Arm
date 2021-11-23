@@ -24,17 +24,19 @@ int main ()
     //ang[1]=ang[1]/2;
 
        //--Can port communications--
-    SocketCanPort pm1("can1");
+
+    string can = "can0";
+    SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
     m1.SetupPositionMode(3,3);
 
-    SocketCanPort pm2("can1");
+    SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
     m2.SetupPositionMode(3,3);
 
-    SocketCanPort pm3("can1");
+    SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(3,3);
@@ -57,8 +59,11 @@ int main ()
     ulong numOrder=0,denOrder=2;
     ulong numOrder2=0,denOrder2=2;// denOrder2=3;
 
+    int wf=1/dts;
+    SystemBlock filter(wf*dts,wf*dts,wf*dts-2,2+wf*dts);
+
     OnlineSystemIdentification modelP(numOrder, denOrder );
-    OnlineSystemIdentification modelP2 (numOrder2, denOrder2, 0.94 );
+    OnlineSystemIdentification modelP2 (numOrder2, denOrder2,filter, 0.94, 0.95,30);
     modelP2.SetDelay(3);
 
 
@@ -69,6 +74,7 @@ int main ()
 
     vector<double> numP(numOrder+1),denP(denOrder+1); //(order 0 also counts)
     SystemBlock sysP(numP,denP); //the resulting identification
+
 
     vector<double> numP2(numOrder2+1),denP2(denOrder2+1); //(order 0 also counts)
     SystemBlock sysP2(numP2,denP2); //the resulting identification
@@ -108,7 +114,7 @@ int main ()
 
         cs[0]=0;
         cs[1]=0;
-        double tmax=5;
+        double tmax=15;
         double iderror=0;
 
         ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionRand.csv",std::ofstream::out); // /home/humasoft/code/graficas
@@ -119,9 +125,9 @@ int main ()
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
             pitch=pitch-off_pitch;
-            //cs[0]=1+0.0001*((rand() % 10 + 1)-5); //u_{i-1}
+            cs[0]=20*(1+0.01*((rand() % 10 + 1)-5)); //u_{i-1}
             //cs[0]=20+0.01*((rand() % 10 + 1)-5); //u_{i-1}
-            cs[0]=20+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
+            //cs[0]=20+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
 
 
             iderror=modelP2.UpdateSystem(cs[0],pitch*180/M_PI);
@@ -160,7 +166,7 @@ int main ()
         for (double t=0; t<tmax; t+=dts)
 
         {
-            cs[0]=20;//*(rand() % 10 + 1)-5;
+            cs[0]=10;//*(rand() % 10 + 1)-5;
             out=cs[0]> sysP2;
             probe3.pushBack(out);
             //Gz.PrintZTransferFunction(dts);

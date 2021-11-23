@@ -20,20 +20,21 @@ int main ()
 
     ofstream data("/home/humasoft/Soft-Arm/graphs/test_sensor_60.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
-    SocketCanPort pm1("can1");
+    string can = "can0";
+    SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(6,6);
+    m1.SetupPositionMode(3,3);
 
-    SocketCanPort pm2("can1");
+    SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(6,6);
+    m2.SetupPositionMode(3,3);
 
-    SocketCanPort pm3("can1");
+    SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(6,6);
+    m3.SetupPositionMode(3,3);
 
     TableArmKinematics a("../Tabla170.csv");
     vector<double> lengths(3);

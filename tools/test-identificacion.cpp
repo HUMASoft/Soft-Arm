@@ -15,7 +15,7 @@ int main()
 //    SystemBlock sys(vector<double>{1,1,1},vector<double>{0.5,-0.9,1});
 //    SystemBlock sys(vector<double>{10},vector<double>{-199,201});
 
-    double dts=0.01;
+    double dts=0.02;
 
 //    (z^2-2*z+1)/((dts^2+2*dts+2)*z^2+(2*dts^2-4)*z+dts^2-2*dts+2)
 //    SystemBlock sys(vector<double>{1, -2, 1},vector<double>{dts*dts-2*dts+2, 2*dts*dts-4, dts*dts+2*dts+2});
@@ -39,22 +39,29 @@ int main()
 
 
 //    SystemBlock sys(vector<double>{1},vector<double>{a0,a1,a2,a3});
-    SystemBlock sys(vector<double>{0.0004934},vector<double>{-0.8377,2.66,-2.821,1});
+    SystemBlock sys(vector<double>{0.0007507833416247848},vector<double>{-0.804998008384384,2.588916184567959,-2.782893369614449,1});
 
-//    SystemBlock sys2(1,0,-p2r,1);
+//    SystemBlock sys(vector<double>{0.0007507833416247848},vector<double>{-0.804998008384384,2.588916184567959,-2.782893369614449,1});
+
+    //    SystemBlock sys2(1,0,-p2r,1);
 //    SystemBlock sys(vector<double>{1},vector<double>{-p2r*(p1r*p1r+p1i*p1i),-2*p1r,1});
 
 
     //Low system gains may result in identification errors!!!
+    double wf=1/dts;
+
+    SystemBlock filter(wf*dts,wf*dts,wf*dts-2,2+wf*dts);
+    filter.PrintZTransferFunction(dts);
+
 
     int numOrder=sys.GetNumOrder(),denOrder=sys.GetDenOrder();
-    OnlineSystemIdentification Gz(numOrder,denOrder,0.95);
-
-    IPlot real(dts,"t(s)","Out","real");
-    IPlot id(dts,"t(s)","Out","id");
+    OnlineSystemIdentification Gz(numOrder,denOrder,filter, 0.95, 0.95, 30 );
+//    Gz.SetDelay(0);
+    IPlot real(dts,"Real","t(s)","Out");
+    IPlot id(dts,"Identication","t(s)","Out");
 
     double in=0,out=0;
-    double tmax=5;
+    double tmax=10;
     double iderror=0;
     long iderrors=0;
 
@@ -62,11 +69,12 @@ int main()
 
     {
 
-        in=1+0.01*((rand() % 10 + 1)-5); //u_{i-1}
+        in=10*(1+0.001*((rand() % 10 + 1)-5)); //u_{i-1}
         out=in > sys ;//y_{i}
 
+
         iderror=Gz.UpdateSystem(in,out);
-        cout << "id error at "  << t << " = "<< iderror << endl;
+//        cout << "id error at "  << t << " = "<< iderror << endl;
 //        if (abs() > 2)
 //        {
 //            cout << "id error at "  << t << endl;
@@ -92,7 +100,7 @@ int main()
     for (double t=0; t<tmax; t+=dts)
 
     {
-        in=1;//*(rand() % 10 + 1)-5;
+        in=20;//*(rand() % 10 + 1)-5;
         out=in > idsys;
         id.pushBack(out);
         //Gz.PrintZTransferFunction(dts);

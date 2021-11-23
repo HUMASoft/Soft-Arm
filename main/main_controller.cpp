@@ -21,17 +21,19 @@ int main ()
 
     ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestC1_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
-    SocketCanPort pm1("can1");
+
+    string can = "can1";
+    SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
     m1.SetupPositionMode(3,3);
 
-    SocketCanPort pm2("can1");
+    SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
     m2.SetupPositionMode(3,3);
 
-    SocketCanPort pm3("can1");
+    SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(3,3);
@@ -80,7 +82,7 @@ int main ()
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
 
 //    PIDBlock conPPID(0.5,2.8,0,dts);
-    PIDBlock conPPID(0.8,2.8,0,dts);
+    PIDBlock conPPID(1,2.2,0,dts);
 
 //    conPPID.AntiWindup(3,3);
 
@@ -116,6 +118,7 @@ int main ()
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
+        cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
 
 //        ang[0]=10*sin(t);
 
