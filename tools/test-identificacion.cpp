@@ -100,7 +100,7 @@ int main()
     for (double t=0; t<tmax; t+=dts)
 
     {
-        in=20;//*(rand() % 10 + 1)-5;
+        in=10;//*(rand() % 10 + 1)-5;
         out=in > idsys;
         id.pushBack(out);
         //Gz.PrintZTransferFunction(dts);

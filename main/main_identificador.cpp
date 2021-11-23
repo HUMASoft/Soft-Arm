@@ -63,7 +63,7 @@ int main ()
     SystemBlock filter(wf*dts,wf*dts,wf*dts-2,2+wf*dts);
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
-    OnlineSystemIdentification modelP2 (numOrder2, denOrder2,filter, 0.94, 0.95,30);
+    OnlineSystemIdentification modelP2 (numOrder2, denOrder2,filter, 0.95, 0.95,30);
     modelP2.SetDelay(3);
 
 
@@ -112,6 +112,9 @@ int main ()
 
     if(d_random==1){
 
+        ang[0] = 20; //ALPHA
+        ang[1] =0; //BETA
+
         cs[0]=0;
         cs[1]=0;
         double tmax=15;
@@ -125,9 +128,10 @@ int main ()
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
             pitch=pitch-off_pitch;
-            cs[0]=20*(1+0.01*((rand() % 10 + 1)-5)); //u_{i-1}
-            //cs[0]=20+0.01*((rand() % 10 + 1)-5); //u_{i-1}
-            //cs[0]=20+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
+            cs[0]=ang[0]*(1+0.01*((rand() % 10 + 1)-5)); //u_{i-1}
+
+            //cs[0]=ang[0]+0.01*((rand() % 10 + 1)-5); //u_{i-1}
+            //cs[0]=ang[0]+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
 
 
             iderror=modelP2.UpdateSystem(cs[0],pitch*180/M_PI);
@@ -166,7 +170,7 @@ int main ()
         for (double t=0; t<tmax; t+=dts)
 
         {
-            cs[0]=10;//*(rand() % 10 + 1)-5;
+            cs[0]=ang[0];//*(rand() % 10 + 1)-5;
             out=cs[0]> sysP2;
             probe3.pushBack(out);
             //Gz.PrintZTransferFunction(dts);
