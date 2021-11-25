@@ -63,7 +63,7 @@ int main ()
     SystemBlock filter(wf*dts,wf*dts,wf*dts-2,2+wf*dts);
 
     OnlineSystemIdentification modelP(numOrder, denOrder );
-    OnlineSystemIdentification modelP2 (numOrder2, denOrder2,filter, 0.95, 0.95,30);
+    OnlineSystemIdentification modelP2 (numOrder2, denOrder2,filter, 0.94, 0.95,30);
     modelP2.SetDelay(3);
 
 
