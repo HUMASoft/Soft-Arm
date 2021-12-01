@@ -14,7 +14,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_Vel10_50_V3.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_50.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -77,6 +77,7 @@ int main ()
     {
         for (ang[1] = -50 ; ang[1] <= 50 ; ang[1]= ang[1]+10)
         {
+            cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
             v_lengths[0]=0.001*( ang[0] / 1.5);
             v_lengths[1]=0.001*( (ang[1] / 1.732) - (ang[0] / 3) );
             v_lengths[2]=0.001*( (ang[0] / -3) - (ang[1] / 1.732) );
@@ -88,17 +89,18 @@ int main ()
             m1.SetPosition(posan1);
             m2.SetPosition(posan2);
             m3.SetPosition(posan3);
-            double interval=5; //in seconds
+
+            double interval=6; //in seconds
             for (double t=0;t<interval; t+=dts)
             {
-                cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
-                cout << "Length variation" << endl;
-                cout << "1: " << v_lengths[0]  << "2: " << v_lengths[1] << "3: " << v_lengths[2] <<endl;
+                //cout << "Length variation" << endl;
+                //cout << "1: " << v_lengths[0]  << "2: " << v_lengths[1] << "3: " << v_lengths[2] <<endl;
                 // Sensor data
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
-                data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
-                cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
-                cout << endl;
+                data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+                //cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
+                //cout << endl;
+                Ts.WaitSamplingTime();
             }
 
             m1.SetPosition(0);
@@ -107,19 +109,17 @@ int main ()
 
             for (double t=0;t<interval; t+=dts)
             {
-                cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
+                //cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
-                data <<0 << " , " <<0<< " , " << roll << " , " << pitch << " , " << yaw <<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << endl; //CR
-                cout<< "Vuelta"<<endl;
-                cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
-                cout << endl;
-
+                data <<0 << " , " <<0<< " , " << roll << " , " << pitch << " , " << yaw <<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+                //cout<< "Vuelta"<<endl;
+                //cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
+                //cout << endl;
                 Ts.WaitSamplingTime();
             }
             misensor.Reset();
             sleep(2);
         }
-
     }
 
     m3.SetPosition(0);
