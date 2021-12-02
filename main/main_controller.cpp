@@ -53,7 +53,7 @@ int main ()
     Ts.SetSamplingTime(dts);
 
     //plot
-    IPlot probe(dts,"Plot Pitch");
+    IPlot probe(dts,"Plot Pitch 500g");
     IPlot probe1(dts,"Plot Yaw");
     IPlot probe2(dts,"Plot I");
     IPlot probe3(dts,"Plot P");
@@ -81,9 +81,11 @@ int main ()
     //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
     //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
 
-    FPDBlock conP(0.3144,0.6729,-1,dts); //(kp,kd,exp,dts)
+//    FPDBlock conP(0.3144,0.6729,-1,dts); //(kp,kd,exp,dts)
+//    FPDBlock conP(0,1,-1.3,dts); //(kp,kd,exp,dts)
+    FPDBlock conP(0,3,-0.7,dts); //(kp,kd,exp,dts)
 
-//    PIDBlock conPPID(0.18,1,0,dts);
+//    PIDBlock conPPID(0,3,0,dts);
 //    PIDBlock conPPID(0.1,1,0,dts);
 //    PIDBlock conPPID(10.9,7.4,3.98,dts);
 //    PIDBlock conPPID(2.77,5,0.55904,dts);
@@ -156,6 +158,7 @@ int main ()
         //SIN YAW
         //cs[0]=ang[0];
         cs[1]=ang[1];
+        cout << "c1: " << cs[1]<< endl;
 
 
         //probe1.pushBack(ierror[0]);
