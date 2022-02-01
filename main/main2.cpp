@@ -16,9 +16,7 @@ int main ()
     ang[0] = 20; //ALPHA
     ang[1] = 0; //BETA
 
-    cout<< "456"<<endl;
-
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest_P.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Test_main2.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -38,6 +36,7 @@ int main ()
     double radio=0.0093;
     vector<double> v_lengths(3);
     double posan1, posan2, posan3;
+    cout<< "456"<<endl;
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
@@ -74,6 +73,7 @@ int main ()
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
     misensor.set_streamon();
+
 
     for (double t=0;t<10;t+=dts)
     {

@@ -17,7 +17,7 @@
 
 int main ()
 {
-    bool d_random=1;
+    bool d_random=0;
     vector<double> ang(2);
     ang[0] = 50; //ALPHA
     ang[1] =50; //BETA
@@ -128,7 +128,7 @@ int main ()
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 
             pitch=pitch-off_pitch;
-            cs[0]=ang[0]*(1+0.01*((rand() % 10 + 1)-5)); //u_{i-1}
+            cs[0]=ang[0]*(1+0.001*((rand() % 10 + 1)-5)); //u_{i-1}
 
             //cs[0]=ang[0]+0.01*((rand() % 10 + 1)-5); //u_{i-1}
             //cs[0]=ang[0]+0.01*(((rand() % 10 + 1)-5)+(sin(t*5)+sin(t*2)+sin(t*7))); //u_{i-1}
@@ -183,7 +183,7 @@ int main ()
 
 
     } else{
-
+    cout<< "Vamos a medir varios datos"<< endl;
     double interval=6; //in seconds
     string sNum="";
     string sDen="";
@@ -194,9 +194,9 @@ int main ()
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
             csr[0]=cs[0];
-            cs[0]=cs[0]+0.001*((rand() % 10 + 1)-5);
+            csr[0]=csr[0]+0.01*((rand() % 10 + 1)-5);
             csr[1]=cs[1];
-            cs[1]=cs[1]+0.001*((rand() % 10 + 1)-5);
+            csr[1]=csr[1]+0.01*((rand() % 10 + 1)-5);
 
             OnlineSystemIdentification modelP(numOrder, denOrder );
             OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
@@ -204,7 +204,7 @@ int main ()
             OnlineSystemIdentification modelY(numOrder, denOrder );
             OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/IndentificacionRand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Identificacion_Rand_0-01/Indentificacion_0-01_Rand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             for (double t=0;t<interval; t+=dts)
             {
@@ -212,15 +212,15 @@ int main ()
 
                 probe.pushBack(pitch*180/M_PI);
 
-                modelP.UpdateSystem(cs[0], pitch*180/M_PI);
-                modelY.UpdateSystem(cs[1], yaw*180/M_PI);
+                modelP.UpdateSystem(csr[0], pitch*180/M_PI);
+                modelY.UpdateSystem(csr[1], yaw*180/M_PI);
 
-                modelP2.UpdateSystem(cs[0], pitch*180/M_PI);
-                modelY2.UpdateSystem(cs[1], yaw*180/M_PI);
+                modelP2.UpdateSystem(csr[0], pitch*180/M_PI);
+                modelY2.UpdateSystem(csr[1], yaw*180/M_PI);
 
-                v_lengths[0]=0.001*( cs[0] / 1.5);
-                v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) ); //Antiguo tendon 3
-                v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) ); //Antiguo tendon 2
+                v_lengths[0]=0.001*( csr[0] / 1.5);
+                v_lengths[1]=0.001*( - (csr[0] / 3) - (csr[1] / 1.732) ); //Antiguo tendon 3
+                v_lengths[2]=0.001*( (csr[1] / 1.732) - (csr[0] / 3) ); //Antiguo tendon 2
 
                 posan1=(v_lengths[0])/radio;
                 posan2=(v_lengths[1])/radio;
@@ -230,23 +230,23 @@ int main ()
                 m2.SetPosition(posan2);
                 m3.SetPosition(posan3);
 
-                data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+                data <<cs[0] << " , " <<cs[1]<< " , " <<csr[0] << " , " <<csr[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
                 //cout << endl;
                 Ts.WaitSamplingTime();
             }
             cout <<"Done:"<<endl;
-            cout<< "Alpha:"<<cs[0]<< ";   Beta:"<<cs[1] <<endl;
-            cs[0]=csr[0];
-            cs[1]=csr[1];
+            cout<< "Alpha:"<<csr[0]<< ";   Beta:"<<csr[1] <<endl;
 
             m1.SetPosition(0);
             m2.SetPosition(0);
             m3.SetPosition(0);
 
-            for (double t=0;t<5; t+=dts)
+            for (double t=0;t<6; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
                 probe.pushBack(pitch*180/M_PI);
+                data <<0 << " , " <<0<< " , " <<0 << " , " <<0<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+
                 Ts.WaitSamplingTime();
             }
 
