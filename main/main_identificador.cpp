@@ -184,7 +184,7 @@ int main ()
 
     } else{
     cout<< "Vamos a medir varios datos"<< endl;
-    double interval=6; //in seconds
+    double interval=5; //in seconds
     string sNum="";
     string sDen="";
 
@@ -193,21 +193,33 @@ int main ()
     {
         for (cs[1] = -ang[1] ; cs[1] <= ang[1] ; cs[1]= cs[1]+10)
         {
-            csr[0]=cs[0];
-            csr[0]=csr[0]+0.01*((rand() % 10 + 1)-5);
-            csr[1]=cs[1];
-            csr[1]=csr[1]+0.01*((rand() % 10 + 1)-5);
-
             OnlineSystemIdentification modelP(numOrder, denOrder );
             OnlineSystemIdentification modelP2 (numOrder2, denOrder2 );
 
             OnlineSystemIdentification modelY(numOrder, denOrder );
             OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Identificacion_Rand_0-01/Indentificacion_0-01_Rand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Identificacion_RandN_0-01/Indentificacion_0-01_Rand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+
+            m1.SetPosition(0);
+            m2.SetPosition(0);
+            m3.SetPosition(0);
+
+            for (double t=0;t<1; t+=dts)
+            {
+                misensor.GetPitchRollYaw(pitch,roll,yaw);
+                probe.pushBack(pitch*180/M_PI);
+                data <<0 << " , " <<0<< " , " <<0 << " , " <<0<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+
+                Ts.WaitSamplingTime();
+            }
 
             for (double t=0;t<interval; t+=dts)
             {
+                csr[0]=cs[0];
+                csr[0]=csr[0]*(1+0.01*((rand() % 10 + 1)-5));
+                csr[1]=cs[1];
+                csr[1]=csr[1]*(1+0.01*((rand() % 10 + 1)-5));
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
 
                 probe.pushBack(pitch*180/M_PI);
@@ -241,7 +253,7 @@ int main ()
             m2.SetPosition(0);
             m3.SetPosition(0);
 
-            for (double t=0;t<6; t+=dts)
+            for (double t=0;t<interval; t+=dts)
             {
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
                 probe.pushBack(pitch*180/M_PI);
