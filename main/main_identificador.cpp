@@ -199,7 +199,7 @@ int main ()
             OnlineSystemIdentification modelY(numOrder, denOrder );
             OnlineSystemIdentification modelY2 (numOrder2, denOrder2 );
 
-            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Identificacion_RandN_0-001/Indentificacion_0-001_Rand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+            ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Identificacion_Rand_0-/Indentificacion_0-_Rand_P"+to_string(int(cs[0]))+"_Y"+to_string(int(cs[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
             m1.SetPosition(0);
             m2.SetPosition(0);
@@ -217,9 +217,9 @@ int main ()
             for (double t=0;t<interval; t+=dts)
             {
                 csr[0]=cs[0];
-                csr[0]=csr[0]*(1+0.001*((rand() % 10 + 1)-5));
+                csr[0]=csr[0]+1*((rand() % 10 + 1)-5);
                 csr[1]=cs[1];
-                csr[1]=csr[1]*(1+0.001*((rand() % 10 + 1)-5));
+                csr[1]=csr[1]+1*((rand() % 10 + 1)-5);
                 misensor.GetPitchRollYaw(pitch,roll,yaw);
 
                 probe.pushBack(pitch*180/M_PI);
