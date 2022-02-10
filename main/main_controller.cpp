@@ -15,11 +15,11 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] =20; //ALPHA
-    ang[1] =0; //BETA
+    ang[0] =40; //ALPHA
+    ang[1] =40; //BETA
     //ang[1]=ang[1]/2;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/TestC2_"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control PID/Control_PID_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -53,10 +53,10 @@ int main ()
     Ts.SetSamplingTime(dts);
 
     //plot
-    IPlot probe(dts,"Plot Pitch 500g");
+    IPlot probe(dts,"Plot Pitch ");
     IPlot probe1(dts,"Plot Yaw");
-    IPlot probe2(dts,"Plot I");
-    IPlot probe3(dts,"Plot P");
+    IPlot probe2(dts,"Plot cs1");
+    IPlot probe3(dts,"Plot cs2");
     IPlot probe4(dts,"Plot m2");
 
 
@@ -77,30 +77,23 @@ int main ()
 
 
     // CONTROLLER
-    //FPDBlock conP(0.4506,0.5478,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
-    //FPDBlock conP(0.7996,0.8271,-1.17,dts); //80 0.8
-    //FPDBlock conP(0.5811,0.5178,-0.97,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+    //PIDSIMPLE
+//    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
+    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
+//    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
+    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
 
-//    FPDBlock conP(0.3144,0.6729,-1,dts); //(kp,kd,exp,dts)
-//    FPDBlock conP(0,1,-1.3,dts); //(kp,kd,exp,dts)
-    FPDBlock conP(0,3,-0.7,dts); //(kp,kd,exp,dts)
-
-//    PIDBlock conPPID(0,3,0,dts);
-//    PIDBlock conPPID(0.1,1,0,dts);
-//    PIDBlock conPPID(10.9,7.4,3.98,dts);
-//    PIDBlock conPPID(2.77,5,0.55904,dts);
-//    PIDBlock conPPID(0.5,2.8,0,dts);
-//    PIDBlock conPPID(1,2.2,0,dts);
 //    conPPID.AntiWindup(3,3);
-
-    //FPDBlock conY(0.6426,0.576,-1.11,dts); //(kp,kd,exp,dts) 0.0214437 90 0.5
-    //FPDBlock conY(1.232,0.8582,-1.24,dts); //80 0.8
-    //FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
-    PIDBlock conYPID(0.2,1.6,0,dts);
-    //PIDBlock conYPID(0,4,0,dts);
 //    conYPID.AntiWindup(3,3);
 
-    //FPDBlock resetP(conP); //Used for control reset
+    //ROBUSTO
+
+
+    //FRACIONARIO
+//    FPDBlock conP(0,3,-0.7,dts); //(kp,kd,exp,dts)
+//    FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+
+//    FPDBlock resetP(conP); //Used for control reset
 //    FPDBlock resetY(conY); //Used for control reset
 
 
@@ -125,10 +118,9 @@ int main ()
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
+        //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
 
 //        ang[0]=10*sin(t);
-
 //        ang[1]=10*cos(t);
 
         ierror[0] = ang[0] - pitch*180/M_PI;
@@ -140,36 +132,25 @@ int main ()
         probe.pushBack(pitch*180/M_PI);
         probe1.pushBack(yaw*180/M_PI);
 
+        // SEÑAL CONTROL PID
+        cs[0] = ierror[0] > conPPID;
+        cs[1] = ierror[1] > conYPID;
+        probe2.pushBack(cs[0]);
+        probe3.pushBack(cs[1]);
 
-        //controller computes control signal FPD
-        cs[0] = ierror[0] > conP;
+//        controller computes control signal FPD
+//        cs[0] = ierror[0] > conP;
 //        cs[1] = ierror[1] > conY;
 
 
 
-//        cs[0] = ierror[0] > conPPID;
-        //cs[1] = ierror[1] > conYPID;
-        probe2.pushBack(cs[0]-ierror[0]*0.3144);
-        probe3.pushBack(ierror[0]*0.3144);
-
-
-
-
-        //SIN YAW
-        //cs[0]=ang[0];
-        cs[1]=ang[1];
-        cout << "c1: " << cs[1]<< endl;
-
-
-        //probe1.pushBack(ierror[0]);
-        //probe2.pushBack(cs[0]);
-        //probe3.pushBack(cs[1]);
-        //cout << endl;
+        //SIN Control 0
+        //cs[0]=0;
+        //cs[1]=0;
 
         if (!isnormal(cs[0])) cs[0] = 0;
 
         if (!isnormal(cs[1])) cs[1] = 0;
-
 
 
         v_lengths[0]=0.001*( cs[0] / 1.5);
@@ -187,7 +168,7 @@ int main ()
         m1.SetPosition(posan1);
         m2.SetPosition(posan2);
         m3.SetPosition(posan3);
-        //data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+        data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
         //cout << endl;
         Ts.WaitSamplingTime();
     }
@@ -196,7 +177,7 @@ int main ()
     //conY = FPDBlock(resetY); //Reset?
 
     probe.Plot();
-    //probe1.Plot();
+    probe1.Plot();
     probe2.Plot();
     probe3.Plot();
     //probe4.Plot();
