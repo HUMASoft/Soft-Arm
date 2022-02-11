@@ -39,7 +39,7 @@ int main ()
     printf( "Trigger OptiTrack Client (NatNet ver. %d.%d.%d.%d)\n", ver[0], ver[1], ver[2], ver[3] );
     g_pClient = new NatNetClient();
     g_connectParams.connectionType = kDefaultConnectionType;
-    g_connectParams.serverAddress = "2.2.2.107";
+    g_connectParams.serverAddress = "2.2.2.104";
 
     int iResult;
     iResult = connectClient();
@@ -54,10 +54,8 @@ int main ()
     }
 
     vector<double> ang(2);
-    ang[0] = 20; //ALPHA
-    ang[1] = 0; //BETA
-
-    cout<< "456"<<endl;
+    ang[0] = 50; //ALPHA
+    ang[1] =50; //BETA
 
     ofstream data("/home/humasoft/code/Soft-Arm/graphs/MocapTest20min2.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
@@ -101,18 +99,7 @@ int main ()
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
     vector<double> valores(8);
-    valores[0]=40;
-    valores[1]=0;
-    valores[2]=0;
-    valores[3]=0;
-    valores[4]=0;
-    valores[5]=20;
-    valores[6]=40;
-    valores[7]=-40;
 
-    //TEST
-    valores[0]=ang[0];
-    valores[4]=ang[1];
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
@@ -139,8 +126,13 @@ int main ()
             printf("Client send rec instruction successfully.\n");
         }
 
-    double interval=600; //in seconds
-    for (double t=0;t<interval; t+=dts)
+    cout<< "Vamos a medir varios datos"<< endl;
+    double interval=5; //in seconds
+    string sNum="";
+    string sDen="";
+
+    double intervala=600; //in seconds
+    for (double t=0;t<intervala; t+=dts)
     {
         cs[0]=20*(sin(t)+sin(t/4))+3*double(rand())/(RAND_MAX);//1*(sin(t)+sin(t/4))+ rand()*3;
         cs[1]=20*(sin(t/3)+sin(t/7))+3*double(rand())/(RAND_MAX);
@@ -192,7 +184,7 @@ int main ()
             printf("Client send stop instruction successfully.\n");
         }
 
-        for (double t=0;t<interval; t+=dts)
+        for (double t=0;t<intervala; t+=dts)
         {
             misensor.GetPitchRollYaw(pitch,roll,yaw);
 

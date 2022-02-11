@@ -14,29 +14,31 @@
 int main ()
 {
 
+
+
     vector<double> ang(2);
     ang[0] =40; //ALPHA
     ang[1] =40; //BETA
     //ang[1]=ang[1]/2;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control PID/Control_PID_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control PID/Control_PI_Vel5_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
     SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(3,3);
+    m1.SetupPositionMode(5,5);//(3,3);
 
     SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(3,3);
+    m2.SetupPositionMode(5,5);
 
     SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(3,3);
+    m3.SetupPositionMode(5,5);
 
 
     double radio=0.0093;
@@ -78,10 +80,10 @@ int main ()
 
     // CONTROLLER
     //PIDSIMPLE
-//    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
-    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
-//    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
-    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
+    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
+//    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
+    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
+//    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
 
 //    conPPID.AntiWindup(3,3);
 //    conYPID.AntiWindup(3,3);
