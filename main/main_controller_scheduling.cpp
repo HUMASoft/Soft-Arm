@@ -15,11 +15,6 @@ int main ()
 {
 
 
-    //if (control_pi==1) {
-    //}else{
-    //    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
-    //    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
-    //}
 
     vector<double> ang(2);
     ang[0] =40; //ALPHA

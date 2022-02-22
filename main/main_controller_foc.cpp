@@ -13,37 +13,30 @@
 
 int main ()
 {
-
-
-    //if (control_pi==1) {
-    //}else{
-    //    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
-    //    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
-    //}
-
     vector<double> ang(2);
-    ang[0] =40; //ALPHA
-    ang[1] =40; //BETA
-    //ang[1]=ang[1]/2;
+    ang[0] =30; //ALPHA
+    ang[1] =30; //BETA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control PID/Control_PI_Vel5_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    double vel=3;
+
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_Fraccionario/Control_FOC_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
     SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.SetupPositionMode(5,5);//(3,3);
+    m1.SetupPositionMode(vel,vel);
 
     SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
-    CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.SetupPositionMode(5,5);
+    CiA402Device m2 (32, &pm2, &sd2);
+    m2.SetupPositionMode(vel,vel);
 
     SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.SetupPositionMode(5,5);
+    m3.SetupPositionMode(vel,vel);
 
 
     double radio=0.0093;
@@ -66,44 +59,15 @@ int main ()
     IPlot probe3(dts,"Plot cs2");
     IPlot probe4(dts,"Plot m2");
 
-
-
-
-//    vector<double> num{0.000438,0.0004682,0};
-//    vector<double> den{0.8187,-1.817,1};
-//    vector<double> num{0.000438*180/M_PI,0.0004682*180/M_PI,0};
-//    vector<double> den{0.8187,-1.817,1};
-//    vector<double> num{0.675716,-0.581882,0};
-//    vector<double> den{0.0263503,-0.905029,1};
-//    SystemBlock pitchModel(num,den);
-//    double pitchPred;
-
-    //identification
-//    OnlineSystemIdentification pitchOnlineModel(1,2);
-
-
-
-    // CONTROLLER
-    //PIDSIMPLE
-    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
-//    PIDBlock conPPID(0.3030,1.8394,0.0125,dts); //PID Pitch
-    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
-//    PIDBlock conYPID(0.2962,1.2143,0.0181,dts); //PID YAW
-
-//    conPPID.AntiWindup(3,3);
-//    conYPID.AntiWindup(3,3);
-
-    //ROBUSTO
-
-
     //FRACIONARIO
-//    FPDBlock conP(0,3,-0.7,dts); //(kp,kd,exp,dts)
-//    FPDBlock conY(0.8508,0.4978,-1.02,dts); //(kp,kd,exp,dts) 0.0214437 100 0.5
+    //FPDBlock conP(0.2039,1.8421,-1,dts); //(kp,kd,exp,dts) ??
+
+
+    FPDBlock conP(0.3092,0.6175,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
+    FPDBlock conY(0.2931,0.4547,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
 
 //    FPDBlock resetP(conP); //Used for control reset
 //    FPDBlock resetY(conY); //Used for control reset
-
-
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
@@ -121,45 +85,35 @@ int main ()
     cout<<"Calibrado"<<endl;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double interval=15; //in seconds
+    double interval=10; //in seconds
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
 
-//        ang[0]=10*sin(t);
-//        ang[1]=10*cos(t);
-
         ierror[0] = ang[0] - pitch*180/M_PI;
         ierror[1] = ang[1] - yaw*180/M_PI;
-
-        //ierror= ierror*M_PI/180; //degrees to rad
 
         //PLOT DE DATOS
         probe.pushBack(pitch*180/M_PI);
         probe1.pushBack(yaw*180/M_PI);
 
-        // SEÑAL CONTROL PID
-        cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
+        //controller computes control signal FPD
+        cs[0] = ierror[0] > conP;
+        cs[1] = ierror[1] > conY;
+
+        //PLOT DE Control
         probe2.pushBack(cs[0]);
         probe3.pushBack(cs[1]);
-
-//        controller computes control signal FPD
-//        cs[0] = ierror[0] > conP;
-//        cs[1] = ierror[1] > conY;
-
-
 
         //SIN Control 0
         //cs[0]=0;
         //cs[1]=0;
 
         if (!isnormal(cs[0])) cs[0] = 0;
-
         if (!isnormal(cs[1])) cs[1] = 0;
 
-
+        // Calculo angulos motores
         v_lengths[0]=0.001*( cs[0] / 1.5);
         v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) );
         v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
@@ -168,15 +122,13 @@ int main ()
         posan2=(v_lengths[1])/radio;
         posan3=(v_lengths[2])/radio;
 
-        //probe2.pushBack(m1.GetPosition());
-        //probe3.pushBack(posan1);
-        //probe4.pushBack(cs[0]);
-
+        // Enviando posicion motores
         m1.SetPosition(posan1);
         m2.SetPosition(posan2);
         m3.SetPosition(posan3);
+
+        //Guardando datos
         data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition()<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
-        //cout << endl;
         Ts.WaitSamplingTime();
     }
     cout <<"Done" << endl;
@@ -193,5 +145,5 @@ int main ()
     m1.SetPosition(0);
     m2.SetPosition(0);
     m3.SetPosition(0);
-//    sleep(4);
+
 }
