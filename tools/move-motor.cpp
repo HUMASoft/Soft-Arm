@@ -7,7 +7,7 @@
 
 int main ()
 {
-    string motor="m1";
+    string motor="m3";
     int velo=1;
     int sentido=-2; // Neg Acortar Posi Alargar
 
