@@ -61,7 +61,9 @@ endforeach( testsourcefile ${APP_SOURCES} )
 #link with libs
 #target_link_libraries( ${PROJECT_NAME} fcontrol ${SUBDIR_LINK_NAMES})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Tabla170.csv ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Tables/Tabla170.csv ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Tables/PID_scheduling.csv ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Tables/PI_scheduling.csv ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
 ##functions
 function(echo_all_cmake_variable_values)

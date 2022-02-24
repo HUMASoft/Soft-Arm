@@ -14,12 +14,17 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =30; //ALPHA
-    ang[1] =30; //BETA
+    ang[0] =40; //ALPHA
+    ang[1] =40; //BETA
 
-    double vel=3;
+    double vel=5;
+    string masa ="0"; // "0" "200" "500"
+    bool windUp=false;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_Fraccionario/Control_FOC_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    string swind="";
+    if (windUp==true) swind="W";
+
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_Fraccionario/Masa_"+masa+"/Control_FOC"+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -63,8 +68,12 @@ int main ()
     //FPDBlock conP(0.2039,1.8421,-1,dts); //(kp,kd,exp,dts) ??
 
 
-    FPDBlock conP(0.3092,0.6175,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
-    FPDBlock conY(0.2931,0.4547,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
+    //FPDBlock conP(0.3092,0.6175,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
+    //FPDBlock conY(0.2931,0.4547,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
+
+    // NEW
+    FPDBlock conP(0.0123,1.2712,-0.99,dts); //(kp,kd,exp,dts) wps=1 pm=65
+    FPDBlock conY(0.0905,0.9614,-0.96,dts);
 
 //    FPDBlock resetP(conP); //Used for control reset
 //    FPDBlock resetY(conY); //Used for control reset
