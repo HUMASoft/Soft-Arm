@@ -14,11 +14,11 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =40; //ALPHA
+    ang[0] =-40; //ALPHA
     ang[1] =40; //BETA
 
     double vel=5;
-    string masa ="0"; // "0" "200" "500"
+    string masa ="500"; // "0" "200" "500"
     bool windUp=false;
 
     string swind="";
@@ -144,10 +144,10 @@ int main ()
     //conP = FPDBlock(resetP); //Reset?
     //conY = FPDBlock(resetY); //Reset?
 
-    probe.Plot();
-    probe1.Plot();
-    probe2.Plot();
-    probe3.Plot();
+    //probe.Plot();
+    //probe1.Plot();
+    //probe2.Plot();
+    //probe3.Plot();
     //probe4.Plot();
 
 
