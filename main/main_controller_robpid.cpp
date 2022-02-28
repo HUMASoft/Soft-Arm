@@ -13,8 +13,8 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =10; //ALPHA
-    ang[1] =0; //BETA
+    ang[0] =40; //ALPHA
+    ang[1] =40; //BETA
 
     double vel=5;
     string masa ="0"; // "200" "500"
@@ -26,7 +26,7 @@ int main ()
     if (control_pi==true) scontrol="PI";
     if (windUp==true) swind="W";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_RobPID/Masa_"+masa+"/Control_Robusto"+scontrol+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_Robusto/Masa_"+masa+"/Control_Rob"+scontrol+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -67,8 +67,11 @@ int main ()
 
     // CONTROLLER
     //PID ROBUSTO
-    PIDBlock conPPID(0.972,1.51,0.124,dts); //PI Pitch  wsp=1.5 pm=100
-    PIDBlock conYPID(0.87,1.13,0.177,dts); //PI YAW
+//    PIDBlock conPPID(0.569,1.24,0.0942,dts); //PI Pitch
+//    PIDBlock conYPID(0.545,0.918,0.108,dts); //PI YAW
+
+//    PIDBlock conPPID(0.972,1.51,0.124,dts); //PI Pitch  wsp=1.5 pm=100
+//    PIDBlock conYPID(0.87,1.13,0.177,dts); //PI YAW
 
 
 //    PIDBlock conPPID(0.972,1.51,0.124,dts); //PI Pitch  wsp=1.5 pm=100 NOP
@@ -80,8 +83,8 @@ int main ()
     //PIDBlock conPPID(0.609,3.74,0.386,dts); //PI Pitch  wsp=2 pm=65 NOP
     //PIDBlock conYPID(0.697,2.61,0.281,dts); //PI YAW
 
-    //PIDBlock conPPID(0.0325,12.3,11,dts); //PI Pitch  wsp=1 pm=65 NOP
-    //PIDBlock conYPID(0.152,2.32,1.36,dts); //PI YAW
+    PIDBlock conPPID(0.0325,12.3,11,dts); //PI Pitch  wsp=1 pm=65 NOP
+    PIDBlock conYPID(0.152,2.32,1.36,dts); //PI YAW
 
     //PIDBlock conPPID(0.6337,2.1946,0.2412,dts); //PI Pitch  wsp=1.5 pm 80
     //PIDBlock conYPID(0.651,1.5838,0.2012,dts); //PI YAW
