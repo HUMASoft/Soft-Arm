@@ -13,11 +13,11 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =0; //ALPHA
-    ang[1] =40; //BETA
+    ang[0] =10; //ALPHA
+    ang[1] =0; //BETA
 
     double vel=5;
-    string masa ="500"; // "200" "500"
+    string masa ="0"; // "200" "500"
     bool control_pi=true;
     bool windUp=false;
 
@@ -26,7 +26,7 @@ int main ()
     if (control_pi==true) scontrol="PI";
     if (windUp==true) swind="W";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_PID/Masa_"+masa+"/Control_"+scontrol+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_RobPID/Masa_"+masa+"/Control_Robusto"+scontrol+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -66,11 +66,25 @@ int main ()
     //IPlot probe4(dts,"Plot m2");
 
     // CONTROLLER
-    //PID SIMPLE
+    //PID ROBUSTO
+    PIDBlock conPPID(0.972,1.51,0.124,dts); //PI Pitch  wsp=1.5 pm=100
+    PIDBlock conYPID(0.87,1.13,0.177,dts); //PI YAW
 
 
-    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
-    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
+//    PIDBlock conPPID(0.972,1.51,0.124,dts); //PI Pitch  wsp=1.5 pm=100 NOP
+//    PIDBlock conYPID(0.87,1.13,0.177,dts); //PI YAW
+
+//    PIDBlock conPPID(0.815,1.79,0.148,dts); //PI Pitch  wsp=1.5 pm=90 NOP
+  //  PIDBlock conYPID(0.772,1.33,0.172,dts); //PI YAW
+
+    //PIDBlock conPPID(0.609,3.74,0.386,dts); //PI Pitch  wsp=2 pm=65 NOP
+    //PIDBlock conYPID(0.697,2.61,0.281,dts); //PI YAW
+
+    //PIDBlock conPPID(0.0325,12.3,11,dts); //PI Pitch  wsp=1 pm=65 NOP
+    //PIDBlock conYPID(0.152,2.32,1.36,dts); //PI YAW
+
+    //PIDBlock conPPID(0.6337,2.1946,0.2412,dts); //PI Pitch  wsp=1.5 pm 80
+    //PIDBlock conYPID(0.651,1.5838,0.2012,dts); //PI YAW
 
 
     if(windUp==true){

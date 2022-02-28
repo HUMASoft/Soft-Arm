@@ -14,7 +14,7 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =-40; //ALPHA
+    ang[0] =0; //ALPHA
     ang[1] =40; //BETA
 
     double vel=5;
