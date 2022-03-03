@@ -13,11 +13,11 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =0; //ALPHA
+    ang[0] =40; //ALPHA
     ang[1] =40; //BETA
 
-    double vel=5;
-    string masa ="500"; // "200" "500"
+    double vel=3;
+    string masa ="f500"; // "200" "500"
     bool control_pi=false;
     bool windUp=false;
 
@@ -26,7 +26,7 @@ int main ()
     if (control_pi==true) scontrol="PI";
     if (windUp==true) swind="W";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_PID/Masa_500/Control_PID_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Control/Control_PID/Masa_"+masa+"/Control_"+scontrol+swind+"_Vel"+to_string(int(vel))+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -51,7 +51,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -68,15 +68,18 @@ int main ()
     // CONTROLLER
     //PID SIMPLE
 
-
+//    PIDBlock conPPID(0.1,1.5,0,dts); //PI Pitch
+//    PIDBlock conYPID(0.1,1.5,0,dts); //PI YAW
 //    PIDBlock conPPID(0.2039,1.8421,0,dts); //PI Pitch
 //    PIDBlock conYPID(0.2201,1.2117,0,dts); //PI YAW
-      PIDBlock conPPID(1.1556,2.115,0.1579,dts); //PID Pitch
-      PIDBlock conYPID(0.9906,1.7281,0.142,dts); //PID YAW
+    PIDBlock conPPID(0.14633,1.2688,0,dts); //PI Pitch
+    PIDBlock conYPID(0.23762,0.9464,0,dts); //PI YAW
+//      PIDBlock conPPID(1.1556,2.115,0.1579,dts); //PID Pitch
+//      PIDBlock conYPID(0.9906,1.7281,0.142,dts); //PID YAW
 
     if(windUp==true){
-        conPPID.AntiWindup(vel,vel);
-        conYPID.AntiWindup(vel,vel);
+        conPPID.AntiWindup(-vel,vel);
+        conYPID.AntiWindup(-vel,vel);
      }
 
 

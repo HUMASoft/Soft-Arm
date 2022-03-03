@@ -13,8 +13,8 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 20; //ALPHA
-    ang[1] = 0; //BETA
+    ang[0] = 0; //ALPHA
+    ang[1] = 40; //BETA
 
     ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Test_main2.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
@@ -40,7 +40,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -84,7 +84,7 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < 4 ; move++)
+    for (long move = 0; move < 1 ; move++)
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
@@ -99,7 +99,7 @@ int main ()
 //            probe2.pushBack(cs[0]);
 //            probe3.pushBack(cs[1]);
             probe2.pushBack(m2.GetPosition());
-            probe3.pushBack(m3.GetPosition());
+            probe3.pushBack(m2.GetVelocity());
 
             if (!isnormal(cs[0])) cs[0] = 0;
 
@@ -121,8 +121,9 @@ int main ()
             m2.SetPosition(posan2);
             m3.SetPosition(posan3);
 
+
+
             data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
-            //cout << endl;
             Ts.WaitSamplingTime();
         }
         interval=3;

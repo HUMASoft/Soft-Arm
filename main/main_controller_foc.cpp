@@ -14,11 +14,11 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =0; //ALPHA
+    ang[0] =40; //ALPHA
     ang[1] =40; //BETA
 
-    double vel=5;
-    string masa ="500"; // "0" "200" "500"
+    double vel=3;
+    string masa ="300"; // "0" "200" "500"
     bool windUp=false;
 
     string swind="";
@@ -50,7 +50,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -72,15 +72,21 @@ int main ()
     //FPDBlock conY(0.2931,0.4547,-1,dts); //(kp,kd,exp,dts) wps=0.5 pm=90
 
     // NEW
-    FPDBlock conP(0.0123,1.2712,-0.99,dts); //(kp,kd,exp,dts) wps=1 pm=65
-    FPDBlock conY(0.0905,0.9614,-0.96,dts);
+    //FPDBlock conP(0.0123,1.2712,-0.99,dts); //(kp,kd,exp,dts) wps=1 pm=65
+    //FPDBlock conY(0.0905,0.9614,-0.96,dts);
+    FPDBlock conP(0.4883,1.309,-1.17,dts);
+    FPDBlock conY(0.4917,0.977,-1.17,dts);
+
 
 //    FPDBlock resetP(conP); //Used for control reset
 //    FPDBlock resetY(conY); //Used for control reset
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
-
+    if(windUp==true){
+        conP.AntiWindup(-vel,vel);
+        conY.AntiWindup(-vel,vel);
+    }
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
     misensor.set_streamon();
@@ -144,10 +150,10 @@ int main ()
     //conP = FPDBlock(resetP); //Reset?
     //conY = FPDBlock(resetY); //Reset?
 
-    //probe.Plot();
-    //probe1.Plot();
-    //probe2.Plot();
-    //probe3.Plot();
+    probe.Plot();
+    probe1.Plot();
+    probe2.Plot();
+    probe3.Plot();
     //probe4.Plot();
 
 
