@@ -19,6 +19,8 @@ include_directories(${NATNET})
 
 aux_source_directory(main SRC_LIST)
 aux_source_directory(tools SRC_LIST)
+aux_source_directory(main_vel SRC_LIST)
+
 
 
 add_subdirectory(lib)

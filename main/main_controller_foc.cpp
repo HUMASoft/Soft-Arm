@@ -15,7 +15,7 @@ int main ()
 {
     vector<double> ang(2);
     ang[0] =40; //ALPHA
-    ang[1] =40; //BETA
+    ang[1] =0; //BETA
 
     double vel=3;
     string masa ="300"; // "0" "200" "500"
@@ -50,7 +50,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -74,7 +74,7 @@ int main ()
     // NEW
     //FPDBlock conP(0.0123,1.2712,-0.99,dts); //(kp,kd,exp,dts) wps=1 pm=65
     //FPDBlock conY(0.0905,0.9614,-0.96,dts);
-    FPDBlock conP(0.4883,1.309,-1.17,dts);
+    FPDBlock conP(0.4778,0.9478,-1.01,dts);
     FPDBlock conY(0.4917,0.977,-1.17,dts);
 
 
@@ -123,7 +123,7 @@ int main ()
 
         //SIN Control 0
         //cs[0]=0;
-        //cs[1]=0;
+        cs[1]=0;
 
         if (!isnormal(cs[0])) cs[0] = 0;
         if (!isnormal(cs[1])) cs[1] = 0;
