@@ -12,8 +12,8 @@
 
 int main ()
 {
-    double interval=50;
-    double amp=5;
+    double interval=16;
+    double amp=6;
     bool test_pitch=true;
     bool test_yaw=false;
     string test_type="";
