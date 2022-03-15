@@ -12,7 +12,7 @@
 
 int main ()
 {
-    double interval=16;
+    double interval=50;
     double amp=5;
     bool test_pitch=true;
     bool test_yaw=false;
@@ -29,7 +29,7 @@ int main ()
 
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_test"+test_type+to_string(int(amp))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
