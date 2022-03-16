@@ -13,7 +13,7 @@
 int main ()
 {
     double interval=16;
-    double amp=6;
+    double amp=3;
     bool test_pitch=true;
     bool test_yaw=false;
     string test_type="";
@@ -29,7 +29,7 @@ int main ()
 
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_squ_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -56,7 +56,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
 
     double pitch,roll, yaw;
 
@@ -89,26 +89,49 @@ int main ()
     // Start test
     ang[0] = 0; //ALPHA
     ang[1] = 0; //BETA
+    double Next=0;
+    double N_interval=8;
+    double i_int=interval/N_interval;
 
+
+    ang[0]=amp;
     // CHANGING ALPHA AND BETA
     for (double t=0;t<interval;t+=dts)
     {
+
+        /*
+        //SIN
         if (test_pitch){
             ang[0]=sin(t+M_PI_2);
         }
         if (test_yaw){
             ang[1]=sin(t+M_PI_2);
         }
+        */
 
+        //SQUARE
+
+        if (t>Next){
+            ang[0]=amp;
+            Next=Next+i_int;
+            amp=amp*-1;
+        }
+
+
+        cout << "Time " << t<< endl;
+
+        cout<< "Vamos a ver "<< Next<< " y "<< ang[0] << endl;
+
+        //ang[0]=0;
         //cout << "Alpha:  " << ang[0] << ", Beta:  " << ang[1] << endl;
         //ang[0]=0;
         v_lengths[0]=( ang[0] / 1.5);
         v_lengths[1]=( (ang[1] / 1.732) - (ang[0] / 3) );
         v_lengths[2]=( (ang[0] / -3) - (ang[1] / 1.732) );
 
-        m1.SetVelocity(amp*v_lengths[0]);
-        m2.SetVelocity(amp*v_lengths[1]);
-        m3.SetVelocity(amp*v_lengths[2]);
+        m1.SetVelocity(v_lengths[0]);
+        m2.SetVelocity(v_lengths[1]);
+        m3.SetVelocity(v_lengths[2]);
 
         misensor.GetPitchRollYaw(pitch,roll,yaw);
 
@@ -126,9 +149,11 @@ int main ()
 
     probe.Plot();
     probe1.Plot();
-    probe2.Plot();
+    //probe2.Plot();
     probe3.Plot();
-    probe4.Plot();
+    //probe4.Plot();
+    cout<<"Back to zero"<<endl;
+
 
     m1.SetVelocity(0);
     m2.SetVelocity(0);
@@ -149,6 +174,7 @@ int main ()
     }
     misensor.Reset();
     //sleep(2);
+    cout<<"end"<<endl;
 
 }
 
