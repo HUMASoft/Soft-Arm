@@ -12,7 +12,7 @@
 
 int main ()
 {
-    double interval=16;
+    double interval=8;
     double amp=3;
     bool test_pitch=true;
     bool test_yaw=false;
@@ -111,12 +111,20 @@ int main ()
 
         //SQUARE
 
+        /*
         if (t>Next){
             ang[0]=amp;
             Next=Next+i_int;
             amp=amp*-1;
         }
+        */
 
+        if (t>2){
+            ang[0]=-3;
+        }
+        if (t>4){
+            ang[0]=0;
+        }
 
         cout << "Time " << t<< endl;
 
