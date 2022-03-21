@@ -12,7 +12,7 @@
 
 int main ()
 {
-    double interval=18;
+    double interval=8;
     double amp=2;
     bool test_pitch=true;
     bool test_yaw=false;
@@ -29,7 +29,7 @@ int main ()
 
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_squ_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_sin_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -100,6 +100,7 @@ int main ()
     for (double t=0;t<interval;t+=dts)
     {
 
+        ang[0]=amp*sin(t);
         /*
         //SIN
         if (test_pitch){
@@ -120,12 +121,17 @@ int main ()
             ang[0]=0;
         }
 
-        */
         if (t>Next){
             ang[0]=amp;
             Next=Next+i_int;
             amp=amp*-1;
         }
+        */
+
+        //RAMPA
+
+
+
 
 
         cout << "Time " << t<< endl;
@@ -147,9 +153,9 @@ int main ()
 
         probe.pushBack(pitch*180/M_PI);
         probe1.pushBack(yaw*180/M_PI);
-        probe2.pushBack(m1.GetVelocity());
-        probe3.pushBack(ang[0]);
-        probe4.pushBack(amp*v_lengths[0]);
+        probe2.pushBack(m2.GetVelocity());
+        probe3.pushBack(v_lengths[1]);
+        probe4.pushBack(m2.GetPosition());
 
         data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " << pitch*180/M_PI << " Yaw: " << yaw*180/M_PI<< endl; //CR
@@ -158,10 +164,10 @@ int main ()
     }
 
     probe.Plot();
-    probe1.Plot();
-    //probe2.Plot();
+    //probe1.Plot();
+    probe2.Plot();
     probe3.Plot();
-    //probe4.Plot();
+    probe4.Plot();
     cout<<"Back to zero"<<endl;
 
 
