@@ -14,12 +14,12 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =40; //ALPHA
-    ang[1] =0; //BETA
+    ang[0] =20; //ALPHA
+    ang[1] =20; //BETA
     //ang[1]=ang[1]/2;
     double vel=3;
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/Test1.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/Test2.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -63,9 +63,10 @@ int main ()
 
 
     //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
-    PIDBlock conPPID(0.1408,0.002353,0,dts); //PID Pitch
-
-    PIDBlock conYPID(0.23762,0.9464,0,dts); //PI YAW
+    //PIDBlock conPPID(0.2186,0.05129,0,dts); //PID Pitch Band 1.5 PM 80
+    //PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
+    PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
+    PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
 
     //conPPID.AntiWindup(3,3);
     //conYPID.AntiWindup(3,3);
@@ -121,7 +122,7 @@ int main ()
 
         //SIN Control 0
         //cs[0]=0;
-        cs[1]=0;
+        //cs[1]=0;
 
 
         if (!isnormal(cs[0])) cs[0] = 0;
@@ -146,10 +147,10 @@ int main ()
     //conY = FPDBlock(resetY); //Reset?
 
     probe.Plot();
-    //probe1.Plot();
+    probe1.Plot();
     probe2.Plot();
-    //probe3.Plot();
-    //probe4.Plot();
+    probe3.Plot();
+    probe4.Plot();
     cout<<"Back to zero"<<endl;
 
 
