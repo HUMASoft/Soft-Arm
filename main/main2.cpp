@@ -16,7 +16,7 @@ int main ()
     ang[0] = 0; //ALPHA
     ang[1] = 40; //BETA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Test_main2.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Demo.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -40,7 +40,7 @@ int main ()
 
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
-    IMU3DMGX510 misensor("/dev/ttyUSB1",freq);
+    IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
 
     double pitch,roll, yaw;
     double dts=1/freq;
@@ -57,18 +57,20 @@ int main ()
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
     vector<double> valores(8);
-    valores[0]=40;
+    valores[0]=60;
     valores[1]=0;
     valores[2]=0;
-    valores[3]=0;
+    valores[3]=-30;
     valores[4]=0;
-    valores[5]=20;
-    valores[6]=40;
-    valores[7]=-40;
+    valores[5]=40;
+    valores[6]=-40;
+    valores[7]=0;
+    double tested=4;
 
     //TEST
-    valores[0]=ang[0];
-    valores[4]=ang[1];
+    //valores[0]=30;
+    //valores[4]=-40;
+    //tested=1;
 
 
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
@@ -84,7 +86,7 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < 1 ; move++)
+    for (long move = 0; move < tested ; move++)
     {
         cs[0]=valores[move];
         cs[1]=valores[move+4];
@@ -120,8 +122,6 @@ int main ()
             m1.SetPosition(posan1);
             m2.SetPosition(posan2);
             m3.SetPosition(posan3);
-
-
 
             data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
             Ts.WaitSamplingTime();

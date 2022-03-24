@@ -14,7 +14,7 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =20; //ALPHA
+    ang[0] =40; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
     double vel=3;
@@ -62,10 +62,13 @@ int main ()
 
 
 
-    PIDBlock conPPID(2,0.48,0,dts); //PID Pitch
+    //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
+    PIDBlock conPPID(0.1408,0.002353,0,dts); //PID Pitch
+
     PIDBlock conYPID(0.23762,0.9464,0,dts); //PI YAW
 
-
+    //conPPID.AntiWindup(3,3);
+    //conYPID.AntiWindup(3,3);
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
@@ -74,7 +77,7 @@ int main ()
     //Once the device is correctly connected, it's set to IDLE mode to stop transmitting data till user requests it
     misensor.set_streamon();
 
-    for (double t=0;t<10;t+=dts)
+    for (double t=0;t<5;t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         //cout<<"Calibrando"<<endl;
@@ -108,6 +111,8 @@ int main ()
         probe2.pushBack(cs[0]);
         probe3.pushBack(cs[1]);
 
+        cout<< "CS: " << cs[0]<< endl;
+
 //        controller computes control signal FPD
 //        cs[0] = ierror[0] > conP;
 //        cs[1] = ierror[1] > conY;
@@ -117,6 +122,7 @@ int main ()
         //SIN Control 0
         //cs[0]=0;
         cs[1]=0;
+
 
         if (!isnormal(cs[0])) cs[0] = 0;
 
@@ -140,9 +146,9 @@ int main ()
     //conY = FPDBlock(resetY); //Reset?
 
     probe.Plot();
-    probe1.Plot();
-    //probe2.Plot();
-    probe3.Plot();
+    //probe1.Plot();
+    probe2.Plot();
+    //probe3.Plot();
     //probe4.Plot();
     cout<<"Back to zero"<<endl;
 

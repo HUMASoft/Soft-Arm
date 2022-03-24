@@ -12,10 +12,10 @@
 
 int main ()
 {
-    double interval=8;
-    double amp=4;
+    double interval=16;
+    double amp=3;
     bool test_pitch=true;
-    bool test_yaw=false;
+    bool test_yaw=true;
     string test_type="";
 
 
@@ -29,7 +29,7 @@ int main ()
 
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_sin_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Identification/ID_sqr_test"+test_type+to_string(int(amp))+"_interval"+to_string(int(interval))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -90,17 +90,14 @@ int main ()
     ang[0] = 0; //ALPHA
     ang[1] = 0; //BETA
     double Next=0;
-    double N_interval=5;
+    double N_interval=8;
     double i_int=interval/N_interval;
-    i_int=4;
 
 
-    ang[0]=0;
     // CHANGING ALPHA AND BETA
     for (double t=0;t<interval;t+=dts)
     {
 
-        ang[0]=amp*sin(t);
         /*
         //SIN
         if (test_pitch){
@@ -127,11 +124,12 @@ int main ()
             amp=amp*-1;
         }
         */
-
-        //RAMPA
-
-
-
+        if (t>Next){
+            ang[0]=amp;
+            ang[1]=amp;
+            Next=Next+i_int;
+            amp=amp*-1;
+        }
 
 
         cout << "Time " << t<< endl;
@@ -164,7 +162,7 @@ int main ()
     }
 
     probe.Plot();
-    //probe1.Plot();
+    probe1.Plot();
     probe2.Plot();
     probe3.Plot();
     probe4.Plot();

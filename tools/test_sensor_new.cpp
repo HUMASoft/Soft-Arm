@@ -32,11 +32,8 @@ using std::cin;
 using std::cout;
 
 
-
-
 int main()
 {
-
     // SENSOR
     double freq=50; //sensor use values: 50,100,500...
     IMU3DMGX510 misensor("/dev/ttyUSB0",freq);
@@ -52,16 +49,11 @@ int main()
 
     for (double t=0;t<100;t+=dts)
     {
-
-
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         cout<<"Calibrando"<<endl;
         cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
         Ts.WaitSamplingTime();
     }
-
-
-
 
 //        EulerAngles = misensor.EulerAngles();
 //        cout << "Roll: " << EulerAngles[0] << " Pitch: " << EulerAngles[1] << " Yaw: " << EulerAngles[2] << endl;

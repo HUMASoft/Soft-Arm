@@ -29,15 +29,6 @@ int main ()
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(3,3);
 
-//    m1.Reset();
-//    m1.SwitchOn();
-
-    // motors must be turned ON
-
-
-//    double pos;
-
-//    double vel;
 
     ////VELOCIDAD negativo es acortar
 
@@ -91,10 +82,5 @@ int main ()
 //    cout << "Enter to stop." <<endl;
 
     // position  [rads]
-
-
-
-
-
 
 }
