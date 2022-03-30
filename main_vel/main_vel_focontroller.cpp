@@ -14,15 +14,13 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =0; //ALPHA
-    ang[1] =0; //BETA
-    //ang[1]=ang[1]/2;
+    ang[0] =-40; //ALPHA
+    ang[1] =40; //BETA
     string masa="500";
-
     // 1p5_80
-    // 1_90
+    // 5_60
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/PI/1/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -40,8 +38,6 @@ int main ()
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
     m3.Setup_Velocity_Mode(5,0);
-
-
 
     vector<double> v_lengths(3);
 
@@ -61,17 +57,11 @@ int main ()
     IPlot probe3(dts,"Plot cs2");
     IPlot probe4(dts,"Plot m2");
 
+//    FPDBlock conP(0.1504,0.0842,-0.29,dts); //FOC Pitch Band 1.5 PM 80
+//    FPDBlock conY(-0.1.33,-0.539,-0.35,dts); //FOC YAW Band 1.5 PM 80
 
-    //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
-    //PIDBlock conPPID(0.2186,0.05129,0,dts); //PID Pitch Band 1.5 PM 80
-    //PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
-    //PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
-    //PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
-    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
-    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-
-    //conPPID.AntiWindup(3,3);
-    //conYPID.AntiWindup(3,3);
+    FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
+    FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
@@ -93,30 +83,31 @@ int main ()
     for (double t=0;t<interval; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
-
-//        ang[0]=10*sin(t);
-//        ang[1]=10*cos(t);
 
         ierror[0] = ang[0] - pitch*180/M_PI;
         ierror[1] = ang[1] - yaw*180/M_PI;
 
-        //ierror= ierror*M_PI/180; //degrees to rad
-        probe4.pushBack(ierror[0]);
         //PLOT DE DATOS
         probe.pushBack(pitch*180/M_PI);
         probe1.pushBack(yaw*180/M_PI);
 
-        // SEÑAL CONTROL PID
-//        cs[0] = ierror[0] > conPPID;
-        cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
+        cs[0] = ierror[0] > conP;
+        cs[1] = ierror[1] > conY;
+
         probe2.pushBack(cs[0]);
         probe3.pushBack(cs[1]);
+        probe4.pushBack(m2.GetVelocity());
+
 
         //SIN Control 0
         //cs[0]=0;
         //cs[1]=0;
+
+
+        if (!isnormal(cs[0])) cs[0] = 0;
+
+        if (!isnormal(cs[1])) cs[1] = 0;
+
 
         v_lengths[0]=( cs[0] / 1.5);
         v_lengths[1]=( (cs[1] / 1.732) - (cs[0] / 3) );
@@ -140,6 +131,7 @@ int main ()
     //probe3.Plot();
     //probe4.Plot();
     cout<<"Back to zero"<<endl;
+
 
     m1.SetVelocity(0);
     m2.SetVelocity(0);
