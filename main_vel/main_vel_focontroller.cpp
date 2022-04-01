@@ -14,13 +14,15 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =-40; //ALPHA
-    ang[1] =40; //BETA
-    string masa="500";
+    ang[0] =40; //ALPHA
+    ang[1] =0; //BETA
+    string masa="0";
     // 1p5_80
     // 5_60
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    // NO GRABA
+
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/2_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -57,11 +59,29 @@ int main ()
     IPlot probe3(dts,"Plot cs2");
     IPlot probe4(dts,"Plot m2");
 
-//    FPDBlock conP(0.1504,0.0842,-0.29,dts); //FOC Pitch Band 1.5 PM 80
-//    FPDBlock conY(-0.1.33,-0.539,-0.35,dts); //FOC YAW Band 1.5 PM 80
+//    FPDBlock conP(0.148,0.0871,-0.29,dts); //FOC Pitch Band 1.5 PM 80
+//    FPDBlock conY(-0.1318,-0.0554,-0.35,dts); //FOC YAW Band 1.5 PM 80
+    FPDBlock conP(0.0601,0.3172,-0.39,dts); //FOC Pitch Band 2 PM 60
+    FPDBlock conY(-0.0581,-0.2416,-0.4,dts); //FOC YAW Band 2 PM 60
 
-    FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
-    FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
+    //FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
+    //FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
+//    double num[5]={0,0.085772060066429,-0.247871985677167,0.238508579019849,-0.07640859297221};
+    vector<double>  num(5);
+    vector<double>  den(5);
+
+    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
+    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
+
+    SystemBlock fPDp(num,den);
+
+    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
+
+    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
+    SystemBlock fPDy(num,den);
+
+    fPDp.PrintZTransferFunction(dts);
+    fPDy.PrintZTransferFunction(dts);
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
@@ -91,8 +111,11 @@ int main ()
         probe.pushBack(pitch*180/M_PI);
         probe1.pushBack(yaw*180/M_PI);
 
-        cs[0] = ierror[0] > conP;
-        cs[1] = ierror[1] > conY;
+//        cs[0] = ierror[0] > conP;
+//        cs[1] = ierror[1] > conY;
+
+        cs[0] = ierror[0] > fPDp;
+        cs[1] = ierror[1] > fPDy;
 
         probe2.pushBack(cs[0]);
         probe3.pushBack(cs[1]);

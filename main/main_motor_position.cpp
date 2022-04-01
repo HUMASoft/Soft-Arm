@@ -16,9 +16,9 @@ int main ()
 
     double posan1, posan2, posan3;
 
-    posan1=120.96;
-    posan2=-118.21;
-    posan3=0.523;
+    posan1=119.27;
+    posan2=-117.38;
+    posan3=-0.37;
 
     double vel=3;
 
