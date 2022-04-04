@@ -14,15 +14,15 @@
 int main ()
 {
     vector<double> ang(2);
-    ang[0] =0; //ALPHA
+    ang[0] =40; //ALPHA
     ang[1] =0; //BETA
-    string masa="0";
+    string masa="500-0";
     // 1p5_80
     // 5_60
 
     // NO GRABA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/2_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";

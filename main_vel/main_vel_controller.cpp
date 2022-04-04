@@ -17,12 +17,12 @@ int main ()
     ang[0] =40; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
-    string masa="500";
+    string masa="500-0";
 
     // 1p5_80
     // 1_90
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/PI/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/PI/5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -67,10 +67,10 @@ int main ()
     //PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
     //PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
     //PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
-//    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
-//    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
-    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
+    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
+    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
+//    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
+//    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
     //conPPID.AntiWindup(3,3);
     //conYPID.AntiWindup(3,3);
 
