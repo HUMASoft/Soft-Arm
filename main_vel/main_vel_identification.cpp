@@ -126,7 +126,7 @@ int main ()
         */
         if (t>Next){
             ang[0]=amp;
-            ang[1]=amp;
+            //ang[1]=amp;
             Next=Next+i_int;
             amp=amp*-1;
         }
