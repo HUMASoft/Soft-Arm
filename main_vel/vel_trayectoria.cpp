@@ -17,7 +17,7 @@ int main ()
 
     string masa="";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_lento.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -56,16 +56,34 @@ int main ()
 
 
     //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
-    //PIDBlock conPPID(0.2186,0.05129,0,dts); //PID Pitch Band 1.5 PM 80
-    //PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
-    PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
-    PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
+    PIDBlock conPPID(0.2186,0.05129,0,dts); //PI Pitch Band 1.5 PM 80
+    PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
+//    PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
+//    PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
 //    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
 //    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-    //PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
-    //PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
-    //conPPID.AntiWindup(3,3);
-    //conYPID.AntiWindup(3,3);
+//    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
+//    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
+
+
+    vector<double>  num(5);
+    vector<double>  den(5);
+
+    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
+    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
+
+    SystemBlock conP(num,den);
+
+    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
+
+    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
+    SystemBlock conY(num,den);
+
+
+
+//    FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
+//    FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
+
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
@@ -83,7 +101,7 @@ int main ()
     cout<<"Calibrado"<<endl;
     cout<<"Moving to Pitch: "+to_string(int(ang[0]))+ " and Yaw: "+to_string(int(ang[1]))<<endl;
 
-    double d=20;
+    double d=30;
 
     double interval=10; //in seconds
     for (double t=0;t<5; t+=dts)
@@ -99,17 +117,21 @@ int main ()
         ierror[1] = ang[1] - yaw*180/M_PI;
 
         //ierror= ierror*M_PI/180; //degrees to rad
-        probe4.pushBack(ierror[0]);
+        //probe4.pushBack(ierror[0]);
         //PLOT DE DATOS
-        probe.pushBack(pitch*180/M_PI);
-        probe1.pushBack(yaw*180/M_PI);
+        //probe.pushBack(pitch*180/M_PI);
+        //probe1.pushBack(yaw*180/M_PI);
 
         // SEÑAL CONTROL PID
-//        cs[0] = ierror[0] > conPPID;
         cs[0] = ierror[0] > conPPID;
         cs[1] = ierror[1] > conYPID;
-        probe2.pushBack(ang[0]);
-        probe3.pushBack(ang[1]);
+        //probe2.pushBack(ang[0]);
+        //probe3.pushBack(ang[1]);
+
+
+        // FOC
+//        cs[0] = ierror[0] > conP;
+//        cs[1] = ierror[1] > conY;
 
         //SIN Control 0
         //cs[0]=0;
@@ -123,7 +145,7 @@ int main ()
         m2.SetVelocity(v_lengths[1]);
         m3.SetVelocity(v_lengths[2]);
 
-        data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
         Ts.WaitSamplingTime();
     }
     cout<< "Reach start"<<endl;
@@ -131,12 +153,13 @@ int main ()
 
     double nt;
 
+
     for (double t=0;t<20; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
-        nt=t/2;
-        ang[0]=(d*sqrt(2)*cos(nt)*sin(nt))/(sin(nt)*sin(nt)+1);
+        nt=t/4;
+        ang[0]=3*(d*sqrt(2)*cos(nt)*sin(nt))/(sin(nt)*sin(nt)+1);
         ang[1]=(d*sqrt(2)*cos(nt))/(sin(nt)*sin(nt)+1);
 
 
@@ -150,11 +173,15 @@ int main ()
         probe1.pushBack(yaw*180/M_PI);
 
         // SEÑAL CONTROL PID
-//        cs[0] = ierror[0] > conPPID;
         cs[0] = ierror[0] > conPPID;
         cs[1] = ierror[1] > conYPID;
         probe2.pushBack(ang[0]);
         probe3.pushBack(ang[1]);
+
+
+        // FOC
+//        cs[0] = ierror[0] > conP;
+//        cs[1] = ierror[1] > conY;
 
         //SIN Control 0
         //cs[0]=0;
