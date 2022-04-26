@@ -13,11 +13,11 @@
 
 int main ()
 {
-    vector<double> ang(2);
+    vector<double> ang(2); REPETIR 40 0 masa
     ang[0] =40; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
-    string masa="500-0";
+    string masa="0";
 
     // 1p5_80
     // 1_90
@@ -118,6 +118,9 @@ int main ()
         //SIN Control 0
         //cs[0]=0;
         //cs[1]=0;
+        if (!isnormal(cs[0])) cs[0] = 0;
+
+        if (!isnormal(cs[1])) cs[1] = 0;
 
         v_lengths[0]=( cs[0] / 1.5);
         v_lengths[1]=( (cs[1] / 1.732) - (cs[0] / 3) );
