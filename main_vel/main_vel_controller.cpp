@@ -13,11 +13,11 @@
 
 int main ()
 {
-    vector<double> ang(2); REPETIR 40 0 masa
+    vector<double> ang(2); //REPETIR 40 0 masa
     ang[0] =40; //ALPHA
     ang[1] =0; //BETA
     //ang[1]=ang[1]/2;
-    string masa="0";
+    string masa="500-0";
 
     // 1p5_80
     // 1_90
