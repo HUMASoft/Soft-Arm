@@ -17,7 +17,7 @@ int main ()
 
     string masa="";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_1p5_0.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_5_0.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -57,10 +57,10 @@ int main ()
 
     //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
 
-//    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
-//    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
-    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
+    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
+    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
+//    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
+//    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
 
 
     // 1p5_60
