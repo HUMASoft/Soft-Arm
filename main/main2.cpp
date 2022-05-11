@@ -13,10 +13,10 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 0; //ALPHA
-    ang[1] = 40; //BETA
+    ang[0] = 35; //ALPHA
+    ang[1] = 0; //BETA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Demo.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Andrea/Demo_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -33,6 +33,8 @@ int main ()
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
     m3.SetupPositionMode(3,3);
+
+
     double radio=0.0093;
     vector<double> v_lengths(3);
     double posan1, posan2, posan3;
@@ -57,15 +59,15 @@ int main ()
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
     vector<double> valores(8);
-    valores[0]=60;
+    valores[0]=ang[0];
     valores[1]=0;
     valores[2]=0;
     valores[3]=-30;
-    valores[4]=0;
+    valores[4]=ang[1];
     valores[5]=40;
     valores[6]=-40;
     valores[7]=0;
-    double tested=4;
+    double tested=1;
 
     //TEST
     //valores[0]=30;
