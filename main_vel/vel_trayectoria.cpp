@@ -17,7 +17,7 @@ int main ()
 
     string masa="";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_5_0.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_FOC_5_0.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -57,14 +57,13 @@ int main ()
 
     //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
 
-    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
-    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
+//    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
+//    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
 //    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
 //    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
 
 
-    // 1p5_60
-//    double num[5]={0,0.085772060066429,-0.247871985677167,0.238508579019849,-0.07640859297221};
+//     1p5_60
 //    vector<double>  num(5);
 //    vector<double>  den(5);
 
@@ -79,21 +78,19 @@ int main ()
 //    SystemBlock fPDy(num,den);
 
     // 5_60
-//        vector<double>  num(5);
-//        vector<double>  den(5);
+        vector<double>  num(5);
+        vector<double>  den(5);
 
-//        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
-//        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
+        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
+        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
 
-//        SystemBlock fPDp(num,den);
+        SystemBlock fPDp(num,den);
 
-//        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
+        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
 
-//        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
-//        SystemBlock fPDy(num,den);
+        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
+        SystemBlock fPDy(num,den);
 
-//    FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
-//    FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
 
 
     vector<double> ierror(2); // ERROR
@@ -134,15 +131,15 @@ int main ()
         //probe1.pushBack(yaw*180/M_PI);
 
         // SEÑAL CONTROL PID
-        cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
+//        cs[0] = ierror[0] > conPPID;
+//        cs[1] = ierror[1] > conYPID;
         //probe2.pushBack(ang[0]);
         //probe3.pushBack(ang[1]);
 
 
         // FOC
-//        cs[0] = ierror[0] > conP;
-//        cs[1] = ierror[1] > conY;
+        cs[0] = ierror[0] > fPDp;
+        cs[1] = ierror[1] > fPDy;
 
         //SIN Control 0
         //cs[0]=0;
@@ -184,15 +181,15 @@ int main ()
         probe1.pushBack(yaw*180/M_PI);
 
         // SEÑAL CONTROL PID
-        cs[0] = ierror[0] > conPPID;
-        cs[1] = ierror[1] > conYPID;
-        probe2.pushBack(ang[0]);
-        probe3.pushBack(ang[1]);
+//        cs[0] = ierror[0] > conPPID;
+//        cs[1] = ierror[1] > conYPID;
+//        probe2.pushBack(ang[0]);
+//        probe3.pushBack(ang[1]);
 
 
         // FOC
-//        cs[0] = ierror[0] > conP;
-//        cs[1] = ierror[1] > conY;
+        cs[0] = ierror[0] > fPDp;
+        cs[1] = ierror[1] > fPDy;
 
         //SIN Control 0
         //cs[0]=0;
@@ -235,7 +232,7 @@ int main ()
     for (double t=0;t<3; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
 
         Ts.WaitSamplingTime();
     }
