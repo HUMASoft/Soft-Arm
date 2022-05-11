@@ -16,30 +16,30 @@ int main ()
     vector<double> ang(2);
     ang[0] =40; //ALPHA
     ang[1] =0; //BETA
-    string masa="0";
+    string masa="900";
     // 1p5_80
     // 5_60
 
     // NO GRABA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+"_FAST.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
     SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
-    m1.Setup_Velocity_Mode(5,0);
+    m1.Setup_Velocity_Mode(10,0);
 
     SocketCanPort pm2(can);
     CiA402SetupData sd2(2048,157,0.001, 1.25, 20 );
     CiA402Device m2 (32, &pm2, &sd2);    //--Can port communications--
-    m2.Setup_Velocity_Mode(5,0);
+    m2.Setup_Velocity_Mode(10,0);
 
     SocketCanPort pm3(can);
     CiA402SetupData sd3(2048,157,0.001, 1.25, 20 );
     CiA402Device m3 (33, &pm3, &sd3);
-    m3.Setup_Velocity_Mode(5,0);
+    m3.Setup_Velocity_Mode(10,0);
 
     vector<double> v_lengths(3);
 
@@ -67,36 +67,35 @@ int main ()
     //FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
 
     // 1p5_60
-//    double num[5]={0,0.085772060066429,-0.247871985677167,0.238508579019849,-0.07640859297221};
-//    vector<double>  num(5);
-//    vector<double>  den(5);
+    vector<double>  num(5);
+    vector<double>  den(5);
 
-//    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
-//    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
+    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
+    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
 
-//    SystemBlock fPDp(num,den);
+    SystemBlock fPDp(num,den);
 
-//    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
+    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
 
-//    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
-//    SystemBlock fPDy(num,den);
+    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
+    SystemBlock fPDy(num,den);
 
     // 5_60
-        vector<double>  num(5);
-        vector<double>  den(5);
+//        vector<double>  num(5);
+//        vector<double>  den(5);
 
-        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
-        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
+//        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
+//        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
 
-        SystemBlock fPDp(num,den);
+//        SystemBlock fPDp(num,den);
 
-        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
+//        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
 
-        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
-        SystemBlock fPDy(num,den);
+//        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
+//        SystemBlock fPDy(num,den);
 
-    fPDp.PrintZTransferFunction(dts);
-    fPDy.PrintZTransferFunction(dts);
+//    fPDp.PrintZTransferFunction(dts);
+//    fPDy.PrintZTransferFunction(dts);
 
     vector<double> ierror(2); // ERROR
     vector<double> cs(2); //CONTROL SIGNAL
