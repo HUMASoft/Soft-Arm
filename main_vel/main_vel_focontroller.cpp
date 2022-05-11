@@ -61,8 +61,7 @@ int main ()
 
 //    FPDBlock conP(0.148,0.0871,-0.29,dts); //FOC Pitch Band 1.5 PM 80
 //    FPDBlock conY(-0.1318,-0.0554,-0.35,dts); //FOC YAW Band 1.5 PM 80
-    FPDBlock conP(0.0601,0.3172,-0.39,dts); //FOC Pitch Band 2 PM 60
-    FPDBlock conY(-0.0581,-0.2416,-0.4,dts); //FOC YAW Band 2 PM 60
+
 
     //FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
     //FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60

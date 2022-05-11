@@ -17,7 +17,7 @@ int main ()
 
     string masa="";
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_lento.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Trayectoria/PI/Tumbocho_PI_1p5_0.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -56,30 +56,41 @@ int main ()
 
 
     //PIDBlock conPPID(0.2671,0.04871,0,dts); //PID Pitch
-    PIDBlock conPPID(0.2186,0.05129,0,dts); //PI Pitch Band 1.5 PM 80
-    PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
-//    PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
-//    PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
+
 //    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
 //    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-//    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
-//    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
+    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
+    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
 
 
-    vector<double>  num(5);
-    vector<double>  den(5);
+    // 1p5_60
+//    double num[5]={0,0.085772060066429,-0.247871985677167,0.238508579019849,-0.07640859297221};
+//    vector<double>  num(5);
+//    vector<double>  den(5);
 
-    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
-    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
+//    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
+//    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
 
-    SystemBlock conP(num,den);
+//    SystemBlock fPDp(num,den);
 
-    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
+//    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
 
-    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
-    SystemBlock conY(num,den);
+//    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
+//    SystemBlock fPDy(num,den);
 
+    // 5_60
+//        vector<double>  num(5);
+//        vector<double>  den(5);
 
+//        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
+//        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
+
+//        SystemBlock fPDp(num,den);
+
+//        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
+
+//        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
+//        SystemBlock fPDy(num,den);
 
 //    FPDBlock conP(0.3168,0.7401,-0.52,dts); //FOC Pitch Jorge Band 5 PM 60
 //    FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
@@ -110,7 +121,7 @@ int main ()
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
 
         ang[0]=(d*sqrt(2)*cos(0)*sin(0))/(sin(0)*sin(0)+1);
-        ang[1]=(d*sqrt(2)*cos(0))/(sin(0)*sin(0)+1);
+        ang[1]=(d*sqrt(2)*cos(0))/(sin(0)*sin(0)+1)/2;
 
 
         ierror[0] = ang[0] - pitch*180/M_PI;
@@ -152,15 +163,15 @@ int main ()
     sleep(2);
 
     double nt;
+    int red=4;
 
-
-    for (double t=0;t<20; t+=dts)
+    for (double t=0;t<=2*M_PI*red; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
         //cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
-        nt=t/4;
-        ang[0]=3*(d*sqrt(2)*cos(nt)*sin(nt))/(sin(nt)*sin(nt)+1);
-        ang[1]=(d*sqrt(2)*cos(nt))/(sin(nt)*sin(nt)+1);
+        nt=t/red;
+        ang[0]=(d*sqrt(2)*cos(nt)*sin(nt))/(sin(nt)*sin(nt)+1);
+        ang[1]=(d*sqrt(2)*cos(nt))/(sin(nt)*sin(nt)+1)/2;
 
 
         ierror[0] = ang[0] - pitch*180/M_PI;
