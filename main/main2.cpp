@@ -13,10 +13,10 @@ int main ()
 {
 
     vector<double> ang(2);
-    ang[0] = 35; //ALPHA
+    ang[0] = 60; //ALPHA
     ang[1] = 0; //BETA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Andrea/Demo_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Andra/Demo_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -62,12 +62,12 @@ int main ()
     valores[0]=ang[0];
     valores[1]=0;
     valores[2]=0;
-    valores[3]=-30;
+    valores[3]=-40;
     valores[4]=ang[1];
     valores[5]=40;
     valores[6]=-40;
     valores[7]=0;
-    double tested=1;
+    double tested=4;
 
     //TEST
     //valores[0]=30;
@@ -88,68 +88,71 @@ int main ()
     cout<<"Calibrado"<<endl;
 
     double interval=5; //in seconds
-    for (long move = 0; move < tested ; move++)
-    {
-        cs[0]=valores[move];
-        cs[1]=valores[move+4];
-        cout<<"Moving to Input Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
-        interval=5;
-        for (double t=0;t<interval; t+=dts)
+    for (double bucle=0;bucle<10; bucle+=1){
+        for (long move = 0; move < tested ; move++)
         {
-            misensor.GetPitchRollYaw(pitch,roll,yaw);
+            cs[0]=valores[move];
+            cs[1]=valores[move+4];
+            cout<<"Moving to Input Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
+            interval=5;
+            for (double t=0;t<interval; t+=dts)
+            {
+                misensor.GetPitchRollYaw(pitch,roll,yaw);
 
-            probe.pushBack(pitch*180/M_PI);
-            probe1.pushBack(yaw*180/M_PI);
-//            probe2.pushBack(cs[0]);
-//            probe3.pushBack(cs[1]);
-            probe2.pushBack(m2.GetPosition());
-            probe3.pushBack(m2.GetVelocity());
+                probe.pushBack(pitch*180/M_PI);
+                probe1.pushBack(yaw*180/M_PI);
+    //            probe2.pushBack(cs[0]);
+    //            probe3.pushBack(cs[1]);
+                probe2.pushBack(m2.GetPosition());
+                probe3.pushBack(m2.GetVelocity());
 
-            if (!isnormal(cs[0])) cs[0] = 0;
+                if (!isnormal(cs[0])) cs[0] = 0;
 
-            if (!isnormal(cs[1])) cs[1] = 0;
-
-
-            v_lengths[0]=0.001*( cs[0] / 1.5);
-            v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) );
-            v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
-
-            posan1=(v_lengths[0])/radio;
-            posan2=(v_lengths[1])/radio;
-            posan3=(v_lengths[2])/radio;
+                if (!isnormal(cs[1])) cs[1] = 0;
 
 
-//            probe4.pushBack(posan2);
+                v_lengths[0]=0.001*( cs[0] / 1.5);
+                v_lengths[1]=0.001*( - (cs[0] / 3) - (cs[1] / 1.732) );
+                v_lengths[2]=0.001*( (cs[1] / 1.732) - (cs[0] / 3) );
 
-            m1.SetPosition(posan1);
-            m2.SetPosition(posan2);
-            m3.SetPosition(posan3);
+                posan1=(v_lengths[0])/radio;
+                posan2=(v_lengths[1])/radio;
+                posan3=(v_lengths[2])/radio;
 
-            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
-            Ts.WaitSamplingTime();
-        }
-        interval=3;
-        for (double t=0;t<interval; t+=dts)
-        {
-            misensor.GetPitchRollYaw(pitch,roll,yaw);
 
-            probe.pushBack(pitch*180/M_PI);
-            probe1.pushBack(yaw*180/M_PI);
-//            probe2.pushBack(0);
-//            probe3.pushBack(0);
-            probe2.pushBack(m2.GetPosition());
-            probe3.pushBack(m3.GetPosition());
+    //            probe4.pushBack(posan2);
 
-            m1.SetPosition(0);
-            m2.SetPosition(0);
-            m3.SetPosition(0);
-            Ts.WaitSamplingTime();
+                m1.SetPosition(posan1);
+                m2.SetPosition(posan2);
+                m3.SetPosition(posan3);
+
+                data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+                Ts.WaitSamplingTime();
+            }
+            interval=3;
+            for (double t=0;t<interval; t+=dts)
+            {
+                misensor.GetPitchRollYaw(pitch,roll,yaw);
+
+                probe.pushBack(pitch*180/M_PI);
+                probe1.pushBack(yaw*180/M_PI);
+    //            probe2.pushBack(0);
+    //            probe3.pushBack(0);
+                probe2.pushBack(m2.GetPosition());
+                probe3.pushBack(m3.GetPosition());
+
+                m1.SetPosition(0);
+                m2.SetPosition(0);
+                m3.SetPosition(0);
+                Ts.WaitSamplingTime();
+            }
         }
     }
     cout <<"Done" << endl;
-    probe.Plot();
-    probe1.Plot();
-    probe2.Plot();
-    probe3.Plot();
+    //probe.Plot();
+    //probe1.Plot();
+    //probe2.Plot();
+    //probe3.Plot();
 //    probe4.Plot();
+
 }
