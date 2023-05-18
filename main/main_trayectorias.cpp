@@ -117,7 +117,7 @@ int main ()
             m2.SetPosition(posan2);
             m3.SetPosition(posan3);
 
-            data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+            data <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
             //cout << endl;
             Ts.WaitSamplingTime();
         }
@@ -167,7 +167,7 @@ int main ()
           posan2=(v_lengths[1])/radio;
           posan3=(v_lengths[2])/radio;
 
-          probe2.pushBack(cs[0]);
+//          probe2.pushBack(cs[0]);
 //            probe3.pushBack(m2.GetPosition());
 //            probe4.pushBack(posan2);
 
@@ -175,7 +175,7 @@ int main ()
           m2.SetPosition(posan2);
           m3.SetPosition(posan3);
 
-          data <<ang[0] << " , " <<ang[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
+          data <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  m1.GetPosition() <<" , " <<m2.GetPosition() <<" , " <<m3.GetPosition() << " , " << cs[0] << " , " <<cs[1] << endl; //CR
           //cout << endl;
           Ts.WaitSamplingTime();
       }

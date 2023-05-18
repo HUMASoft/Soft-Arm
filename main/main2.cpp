@@ -83,13 +83,9 @@ int main ()
         ofstream data("/home/humasoft/code/Soft-Arm/graphs/Identificacion/Andrea/Demo_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
         vector<double> valores(8);
         valores[0]=ang[0];
-        valores[1]=0;
-        valores[2]=0;
-        valores[3]=-40;
-        valores[4]=ang[1];
-        valores[5]=40;
-        valores[6]=-40;
-        valores[7]=0;
+
+        valores[1]=ang[1];
+
         double tested=1;
 
         double interval=5; //in seconds
@@ -97,7 +93,7 @@ int main ()
             for (long move = 0; move < tested ; move++)
             {
                 cs[0]=valores[move];
-                cs[1]=valores[move+4];
+                cs[1]=valores[move+1];
                 cout<<"Moving to Input Pitch: "+to_string(int(cs[0]))+ " and Yaw: "+to_string(int(cs[1]))<<endl;
                 interval=5;
                 for (double t=0;t<interval; t+=dts)

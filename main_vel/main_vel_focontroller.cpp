@@ -22,7 +22,7 @@ int main ()
 
     // NO GRABA
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+"_FAST.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    //ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/FOC/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+"_FAST.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -67,32 +67,32 @@ int main ()
     //FPDBlock conY(-0.3083,-0.9967,-0.46,dts); //FOC YAW Jorge Band 5 PM 60
 
     // 1p5_60
-    vector<double>  num(5);
-    vector<double>  den(5);
+//    vector<double>  num(5);
+//    vector<double>  den(5);
 
-    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
-    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
+//    num={-0.089862194815923,0.281419410260342,-0.293360525912833,0.101803394370491,0};
+//    den={0.060438759633418,-1.1333102350899,3.085117496232294,-3.012245968645809,1};
 
-    SystemBlock fPDp(num,den);
+//    SystemBlock fPDp(num,den);
 
-    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
+//    num={0.07640859291221,-0.238508579019849,0.247871985677167,-0.085772060066429,0};
 
-    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
-    SystemBlock fPDy(num,den);
+//    den={0.041725532270869,-1.078494548630914,3.031640050655836,-2.994870988390003,1};
+//    SystemBlock fPDy(num,den);
 
     // 5_60
-//        vector<double>  num(5);
-//        vector<double>  den(5);
+        vector<double>  num(5);
+        vector<double>  den(5);
 
-//        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
-//        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
+        num={-0.375543833889649,1.24112787458877,-1.35847240658737,0.492895046951348,0};
+        den={4.47332104900490e-11,-0.868862193096630,2.73638560274671,-2.86752245432437,1};
 
-//        SystemBlock fPDp(num,den);
+        SystemBlock fPDp(num,den);
 
-//        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
+        num={0.346527848722515,-1.11826908804395,1.19863394155391,-0.426896402163610,0};
 
-//        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
-//        SystemBlock fPDy(num,den);
+        den={1.98300334852151e-16,-0.893065314147592,2.78523412827786,-2.89216829934402,1};
+        SystemBlock fPDy(num,den);
 
 //    fPDp.PrintZTransferFunction(dts);
 //    fPDy.PrintZTransferFunction(dts);
@@ -154,7 +154,7 @@ int main ()
         m2.SetVelocity(v_lengths[1]);
         m3.SetVelocity(v_lengths[2]);
 
-        data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
         Ts.WaitSamplingTime();
     }
 
@@ -183,7 +183,7 @@ int main ()
     for (double t=0;t<3; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
 
         Ts.WaitSamplingTime();
     }

@@ -22,7 +22,7 @@ int main ()
     // 1p5_80
     // 1_90
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/PI/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+    //ofstream data("/home/humasoft/code/Soft-Arm/graphs/Vel/Control/PI/1p5_60/Control_Masa_"+masa+"_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
     string can = "can0";
@@ -67,10 +67,10 @@ int main ()
     //PIDBlock conYPID(-0.1736,-0.378,0,dts); //PI YAW Band 1.5 PM 80
     //PIDBlock conPPID(0.1474,0.00258,0,dts); //PID Pitch Band 1 PM 90
     //PIDBlock conYPID(-0.1169,-0.002,0,dts); //PI YAW Band 1 PM 90
-//    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
-//    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
-    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
-    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
+    PIDBlock conPPID(0.6689,1.58,0,dts); //PID Pitch Band 5 PM 60
+    PIDBlock conYPID(-0.5395,-1.174,0,dts); //PI YAW Band 5 PM 60
+//    PIDBlock conPPID(0.1937,0.1603,0,dts); //PID Pitch Band 1.5 PM 60
+//    PIDBlock conYPID(-0.1546,-0.1246,0,dts); //PI YAW Band 1.5 PM 60
 
 
 //    PIDBlock conPPID(0.3936,0.6089,0,dts); //PID Pitch Band 3 PM 60
@@ -134,7 +134,7 @@ int main ()
         m2.SetVelocity(v_lengths[1]);
         m3.SetVelocity(v_lengths[2]);
 
-        data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<ang[0] << " , " <<ang[1]<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
         Ts.WaitSamplingTime();
     }
 
@@ -162,7 +162,7 @@ int main ()
     for (double t=0;t<3; t+=dts)
     {
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
+        //data <<0 << " , " <<0<< " , " <<cs[0] << " , " <<cs[1]<< " , " << roll << " , " << pitch << " , " << yaw<<" , " <<  v_lengths[0] <<" , " <<v_lengths[1] <<" , " <<v_lengths[2]<<" , " <<  m1.GetPosition() <<" , "<<  m2.GetPosition() <<" , "<<  m3.GetPosition() <<" , "<<  m1.GetVelocity() <<" , " <<m2.GetVelocity() <<" , " <<m3.GetVelocity() <<" , " <<  m1.GetAmps() <<" , " <<m2.GetAmps() <<" , " <<m3.GetAmps()  << endl; //CR
 
         Ts.WaitSamplingTime();
     }

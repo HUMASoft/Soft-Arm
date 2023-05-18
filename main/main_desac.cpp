@@ -14,7 +14,7 @@ int main ()
 {
 
 
-    ofstream data("/home/humasoft/code/Soft-Arm/graphs/desacoplado_50.csv",std::ofstream::out); // /home/humasoft/code/graficas
+    ofstream data("/home/humasoft/code/Soft-Arm/graphs/Data_Javi50.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
     string can = "can0";
     SocketCanPort pm1(can);
@@ -63,9 +63,9 @@ int main ()
 
 
         misensor.GetPitchRollYaw(pitch,roll,yaw);
-        cout<<"Calibrando"<<endl;
-        cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
+        // cout << "Roll: " << roll*180/M_PI << " Pitch: " <<pitch*180/M_PI  << " Yaw: " << yaw*180/M_PI << endl;
     }
+    cout<<"Calibrado"<<endl;
 
 
 
@@ -73,7 +73,7 @@ int main ()
     ang[1] = 0; //BETA
 
     // CHANGING ALPHA AND BETA
-    for (ang[0] = -50 ; ang[0] <= 50 ; ang[0]= ang[0]+10)
+    for (ang[0] = -50 ; ang[0] <= -50 ; ang[0]= ang[0]+10)
     {
         for (ang[1] = -50 ; ang[1] <= 50 ; ang[1]= ang[1]+10)
         {

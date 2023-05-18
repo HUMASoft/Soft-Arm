@@ -8,8 +8,8 @@
 int main ()
 {
     string motor="m1";
-    int velo=1;
-    int sentido=-2; // Neg Acortar Posi Alargar
+    int velo=2;
+    int sentido=-1; // Neg Acortar Posi Alargar
 
 
     //--Can port communications--

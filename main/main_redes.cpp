@@ -9,6 +9,7 @@
 #include "imu3dmgx510.h"
 #include <string>
 
+
 int main ()
 {
 
@@ -57,7 +58,7 @@ int main ()
     misensor.set_streamon();
 
     ifstream csv;
-    csv.open("/home/humasoft/code/Soft-Arm/Tables/test.csv");
+    csv.open("/home/humasoft/code/Soft-Arm/Tables/testIKExact(1).csv");
     //csv.seekg(0);
 
     string line;
@@ -73,14 +74,14 @@ int main ()
     cout<<"Calibrado"<<endl;
 
 
-    for (int i=1;i<=20;i++){
+    for (int i=1;i<=19;i++){
         getline(csv,line);
         //cout << line << endl;
 
 
         istringstream sstream(line);
 
-        getline(sstream, word, ';' );
+        getline(sstream, word, ',' );
         if (i==1){
             i1=-1;
         }else{
@@ -88,23 +89,23 @@ int main ()
             i1=stod(string(word));
 
         }
-        getline(sstream, word, ';' );
+        getline(sstream, word, ',' );
         i2=stod(word);
 
 
-        getline(sstream, word, ';' );
+        getline(sstream, word, ',' );
         mot1=stod(word);
-        getline(sstream, word, ';' );
+        getline(sstream, word, ',' );
         mot2=stod(word);
-        getline(sstream, word, ';' );
+        getline(sstream, word, ',' );
         mot3=stod(word);
 
-        //cout << i1<<" " << i2<<" "  << mot1<< " "  <<mot2<< " " << mot3 <<" " <<line << endl;
+        // cout << i1<<" " << i2<<" "  << mot1<< " "  <<mot2<< " " << mot3 <<" " <<line << endl;
 
-        ofstream data("/home/humasoft/code/Soft-Arm/graphs/Javi_Redes/Demo_P"+to_string(int(i1))+"_Y"+to_string(int(i2))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
+        ofstream data("/home/humasoft/code/Soft-Arm/graphs/Javi_Redes/Demo2_P"+to_string(int(i1))+"_Y"+to_string(int(i2))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
 
 
-
+        cout << i1<<" " << i2<<" "  << mot1<< " "  <<mot2<< " " << mot3 << " " << mot3*M_PI/180 << endl;
 
 
         double interval=6; //in seconds
