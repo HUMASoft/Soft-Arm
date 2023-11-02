@@ -22,7 +22,7 @@ int main ()
 
     ofstream data("/home/humasoft/code/Soft-Arm/graphs/Trayectoria_P"+to_string(int(ang[0]))+"_Y"+to_string(int(ang[1]))+".csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
-    string can = "can0";
+    string can = "can1";
     SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);

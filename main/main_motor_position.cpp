@@ -16,16 +16,23 @@ int main ()
 
     double posan1, posan2, posan3;
 
-    posan1=119.27;
-    posan2=-117.38;
-    posan3=-0.37;
+//    posan1=-132.586728192372;
+//    posan2=145.129872274077;
+//    posan3=-13.3425594381022;
+
+    posan1=101.083578573936;
+    posan2=-90.3329443656664;
+    posan3=-14.2477623227733;
+
+
+
 
     double vel=3;
 
     ofstream data("/home/humasoft/code/Soft-Arm/graphs/Tests/position.csv",std::ofstream::out); // /home/humasoft/code/graficas
     //--Can port communications--
 
-    string can = "can0";
+    string can = "can1";
     SocketCanPort pm1(can);
     CiA402SetupData sd1(2048,157,0.001, 1.25, 20 );
     CiA402Device m1 (31, &pm1, &sd1);
@@ -91,9 +98,9 @@ int main ()
 
     probe.Plot();
     probe1.Plot();
-    probe2.Plot();
-    probe3.Plot();
-    probe4.Plot();
+    //probe2.Plot();
+    //probe3.Plot();
+    //probe4.Plot();
 
 
     m1.SetPosition(0);

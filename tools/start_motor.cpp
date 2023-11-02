@@ -5,7 +5,7 @@
 
 int main ()
 {
-  string can = "can0";
+  string can = "can1";
 
   //m1 setup
   SocketCanPort pm31(can);
